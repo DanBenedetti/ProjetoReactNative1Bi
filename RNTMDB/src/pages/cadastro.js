@@ -3,16 +3,22 @@ import { Alert, KeyboardAvoidingView, Platform, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 
-import FormField from "../components/FormField";
+import CampoFormulario from "../components/FormField";
 import {
-  FormBody,
-  FormScroll,
-  PrimaryButton,
-  PrimaryButtonText,
-  SectionTitle,
+  BotaoPrincipal,
+  CorpoFormulario,
+  RolagemFormulario,
+  TextoBotaoPrincipal,
+  TituloSecao,
 } from "../styles";
-import { useTheme } from "../contexts/ThemeContext";
-import { isValidCPF, isValidEmail, isValidPhone, maskCPF, maskPhone } from "../utils/validators";
+import { useTema } from "../contexts/ThemeContext";
+import {
+  cpfValido,
+  emailValido,
+  mascararCpf,
+  mascararTelefone,
+  telefoneValido,
+} from "../utils/validators";
 
 /**
  * Tela 2 - CADASTRAR USUÁRIO
@@ -21,7 +27,7 @@ import { isValidCPF, isValidEmail, isValidPhone, maskCPF, maskPhone } from "../u
  * O botão SALVAR grava tudo no AsyncStorage e volta para o LOGIN.
  */
 
-const INITIAL_FORM = {
+const FORMULARIO_INICIAL = {
   nome: "",
   telefone: "",
   cpf: "",
@@ -31,158 +37,161 @@ const INITIAL_FORM = {
 };
 
 /** Validação pura: recebe o formulário e devolve os erros por campo. */
-const validate = (form) => {
-  const errors = {};
+const validar = (formulario) => {
+  const erros = {};
 
-  if (form.nome.trim().length < 3) {
-    errors.nome = "Informe o nome completo (mínimo 3 caracteres).";
+  if (formulario.nome.trim().length < 3) {
+    erros.nome = "Informe o nome completo (mínimo 3 caracteres).";
   }
-  if (!isValidPhone(form.telefone)) {
-    errors.telefone = "Telefone inválido. Use (DD) 99999-9999.";
+  if (!telefoneValido(formulario.telefone)) {
+    erros.telefone = "Telefone inválido. Use (DD) 99999-9999.";
   }
-  if (!isValidCPF(form.cpf)) {
-    errors.cpf = "CPF inválido. Confira os números digitados.";
+  if (!cpfValido(formulario.cpf)) {
+    erros.cpf = "CPF inválido. Confira os números digitados.";
   }
-  if (!isValidEmail(form.email)) {
-    errors.email = "E-mail inválido. Ex.: nome@email.com";
+  if (!emailValido(formulario.email)) {
+    erros.email = "E-mail inválido. Ex.: nome@email.com";
   }
-  if (form.senha.length < 6) {
-    errors.senha = "A senha precisa ter pelo menos 6 caracteres.";
+  if (formulario.senha.length < 6) {
+    erros.senha = "A senha precisa ter pelo menos 6 caracteres.";
   }
-  if (form.curso.trim().length < 2) {
-    errors.curso = "Informe o curso. Ex.: DSM";
+  if (formulario.curso.trim().length < 2) {
+    erros.curso = "Informe o curso. Ex.: DSM";
   }
 
-  return errors;
+  return erros;
 };
 
-const MASKS = { telefone: maskPhone, cpf: maskCPF };
+const MASCARAS = { telefone: mascararTelefone, cpf: mascararCpf };
 
 const Cadastro = () => {
-  const navigation = useNavigation();
-  const { colors } = useTheme();
+  const navegacao = useNavigation();
+  const { cores } = useTema();
 
-  const [form, setForm] = useState(INITIAL_FORM);
-  const [submitted, setSubmitted] = useState(false);
+  const [formulario, definirFormulario] = useState(FORMULARIO_INICIAL);
+  const [enviado, definirEnviado] = useState(false);
 
   // Os erros são calculados a partir do formulário (sem estado duplicado).
-  const errors = useMemo(() => validate(form), [form]);
+  const erros = useMemo(() => validar(formulario), [formulario]);
 
   // Só mostra o erro depois da primeira tentativa de salvar, para não
   // "gritar" com o usuário enquanto ele ainda está digitando.
-  const errorFor = (key) => (submitted ? errors[key] : undefined);
+  const erroDe = (campo) => (enviado ? erros[campo] : undefined);
 
-  const handleChange = (key) => (value) => {
-    const mask = MASKS[key];
-    setForm((current) => ({ ...current, [key]: mask ? mask(value) : value }));
+  const alterarCampo = (campo) => (valor) => {
+    const mascara = MASCARAS[campo];
+    definirFormulario((atual) => ({
+      ...atual,
+      [campo]: mascara ? mascara(valor) : valor,
+    }));
   };
 
-  const handleSalvar = async () => {
-    setSubmitted(true);
+  const salvar = async () => {
+    definirEnviado(true);
 
-    if (Object.keys(errors).length > 0) {
+    if (Object.keys(erros).length > 0) {
       Alert.alert("Verifique os campos", "Alguns dados precisam ser corrigidos.");
       return;
     }
 
     try {
-      const user = {
-        nome: form.nome.trim(),
-        telefone: form.telefone.trim(),
-        cpf: form.cpf.trim(),
-        email: form.email.trim().toLowerCase(),
-        senha: form.senha,
-        curso: form.curso.trim(),
+      const usuario = {
+        nome: formulario.nome.trim(),
+        telefone: formulario.telefone.trim(),
+        cpf: formulario.cpf.trim(),
+        email: formulario.email.trim().toLowerCase(),
+        senha: formulario.senha,
+        curso: formulario.curso.trim(),
         criadoEm: new Date().toISOString(),
       };
 
-      await AsyncStorage.setItem("user", JSON.stringify(user));
+      await AsyncStorage.setItem("user", JSON.stringify(usuario));
 
       Alert.alert("Tudo certo!", "Usuário cadastrado com sucesso.", [
         {
           text: "Ir para o login",
-          onPress: () => navigation.navigate("login", { email: user.email }),
+          onPress: () => navegacao.navigate("entrar", { email: usuario.email }),
         },
       ]);
-    } catch (error) {
+    } catch (erro) {
       Alert.alert("Erro", "Não foi possível salvar os dados do usuário.");
     }
   };
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: colors.background }}
+      style={{ flex: 1, backgroundColor: cores.fundo }}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <FormScroll>
-        <SectionTitle>Seus dados</SectionTitle>
-        <FormBody>
-          <FormField
-            label="Nome"
+      <RolagemFormulario>
+        <TituloSecao>Seus dados</TituloSecao>
+        <CorpoFormulario>
+          <CampoFormulario
+            rotulo="Nome"
             placeholder="Nome completo"
             autoCapitalize="words"
-            value={form.nome}
-            onChangeText={handleChange("nome")}
-            error={errorFor("nome")}
+            value={formulario.nome}
+            onChangeText={alterarCampo("nome")}
+            erro={erroDe("nome")}
           />
 
-          <FormField
-            label="Telefone"
+          <CampoFormulario
+            rotulo="Telefone"
             placeholder="(00) 00000-0000"
             keyboardType="phone-pad"
             maxLength={15}
-            value={form.telefone}
-            onChangeText={handleChange("telefone")}
-            error={errorFor("telefone")}
+            value={formulario.telefone}
+            onChangeText={alterarCampo("telefone")}
+            erro={erroDe("telefone")}
           />
 
-          <FormField
-            label="CPF"
+          <CampoFormulario
+            rotulo="CPF"
             placeholder="000.000.000-00"
             keyboardType="number-pad"
             maxLength={14}
-            value={form.cpf}
-            onChangeText={handleChange("cpf")}
-            error={errorFor("cpf")}
+            value={formulario.cpf}
+            onChangeText={alterarCampo("cpf")}
+            erro={erroDe("cpf")}
           />
 
-          <FormField
-            label="E-mail"
+          <CampoFormulario
+            rotulo="E-mail"
             placeholder="nome@email.com"
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
-            value={form.email}
-            onChangeText={handleChange("email")}
-            error={errorFor("email")}
+            value={formulario.email}
+            onChangeText={alterarCampo("email")}
+            erro={erroDe("email")}
           />
 
-          <FormField
-            label="Senha"
+          <CampoFormulario
+            rotulo="Senha"
             placeholder="Mínimo 6 caracteres"
             secureTextEntry
             autoCapitalize="none"
-            value={form.senha}
-            onChangeText={handleChange("senha")}
-            error={errorFor("senha")}
+            value={formulario.senha}
+            onChangeText={alterarCampo("senha")}
+            erro={erroDe("senha")}
           />
 
-          <FormField
-            label="Curso"
+          <CampoFormulario
+            rotulo="Curso"
             placeholder="Ex.: DSM - Desenvolvimento de Software Multiplataforma"
             autoCapitalize="words"
-            value={form.curso}
-            onChangeText={handleChange("curso")}
-            error={errorFor("curso")}
+            value={formulario.curso}
+            onChangeText={alterarCampo("curso")}
+            erro={erroDe("curso")}
           />
 
           <View style={{ height: 12 }} />
 
-          <PrimaryButton onPress={handleSalvar}>
-            <PrimaryButtonText>Salvar</PrimaryButtonText>
-          </PrimaryButton>
-        </FormBody>
-      </FormScroll>
+          <BotaoPrincipal onPress={salvar}>
+            <TextoBotaoPrincipal>Salvar</TextoBotaoPrincipal>
+          </BotaoPrincipal>
+        </CorpoFormulario>
+      </RolagemFormulario>
     </KeyboardAvoidingView>
   );
 };

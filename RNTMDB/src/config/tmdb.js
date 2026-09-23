@@ -7,22 +7,24 @@
  * Modelo disponível em ".env.example".
  */
 
-export const TMDB_API_KEY = (process.env.EXPO_PUBLIC_TMDB_API_KEY || "").trim();
+export const TMDB_CHAVE_API = (
+  process.env.EXPO_PUBLIC_TMDB_API_KEY || ""
+).trim();
 
-export const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+export const TMDB_URL_BASE = "https://api.themoviedb.org/3";
 
 /** Base para montar o caminho das imagens retornadas pela API. */
-export const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
+export const TMDB_URL_BASE_IMAGENS = "https://image.tmdb.org/t/p";
 
-export const IMAGE_SIZES = {
+export const TAMANHOS_IMAGEM = {
   poster: "w500",
   backdrop: "w780",
   profile: "w185",
 };
 
 /** Idioma padrão das respostas (sinopses, títulos e gêneros em português). */
-export const TMDB_LANGUAGE = "pt-BR";
+export const TMDB_IDIOMA = "pt-BR";
 
 /** O TMDb só responde corretamente quando a chave está preenchida. */
-export const hasApiKey = () =>
-  TMDB_API_KEY.length > 0 && TMDB_API_KEY !== "sua_api_key_aqui";
+export const temChaveApi = () =>
+  TMDB_CHAVE_API.length > 0 && TMDB_CHAVE_API !== "sua_api_key_aqui";

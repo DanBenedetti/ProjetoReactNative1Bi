@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { cardKey } from "../utils/format";
+import { chaveDoCartao } from "../utils/format";
 
 /**
  * Guarda os "cards" que o usuário adicionou (a lista dele).
@@ -16,122 +16,136 @@ import { cardKey } from "../utils/format";
  * depois de fechar e abrir o app novamente.
  */
 
-const STORAGE_KEY = "library";
+/* A chave do armazenamento continua em inglês porque é o nome do registro
+   que já está gravado no aparelho de quem usa o app. */
+const CHAVE_ARMAZENAMENTO = "library";
 
-const LibraryContext = createContext(null);
+const ContextoBiblioteca = createContext(null);
 
-export const LibraryProvider = ({ children }) => {
-  const [items, setItems] = useState([]);
-  const [ready, setReady] = useState(false);
+export const ProvedorBiblioteca = ({ children }) => {
+  const [itens, definirItens] = useState([]);
+  const [pronto, definirPronto] = useState(false);
 
   // Carrega a biblioteca salva ao abrir o app.
   useEffect(() => {
-    let active = true;
+    let ativo = true;
 
-    AsyncStorage.getItem(STORAGE_KEY)
-      .then((saved) => {
-        if (active && saved) setItems(JSON.parse(saved));
+    AsyncStorage.getItem(CHAVE_ARMAZENAMENTO)
+      .then((salvos) => {
+        if (ativo && salvos) definirItens(JSON.parse(salvos));
       })
       .catch(() => {})
       .finally(() => {
-        if (active) setReady(true);
+        if (ativo) definirPronto(true);
       });
 
     return () => {
-      active = false;
+      ativo = false;
     };
   }, []);
 
   // Sempre que a lista muda, salva (mesma ideia do componentDidUpdate do GitViewer).
   useEffect(() => {
-    if (!ready) return;
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(items)).catch(() => {});
-  }, [items, ready]);
+    if (!pronto) return;
+    AsyncStorage.setItem(CHAVE_ARMAZENAMENTO, JSON.stringify(itens)).catch(
+      () => {},
+    );
+  }, [itens, pronto]);
 
   /**
    * Adiciona um card. Retorna false quando ele já estava na lista.
    * A verificação usa a lista atual (closure) para o retorno ser síncrono
    * e confiável, já que o React não executa o updater do setState na hora.
    */
-  const addItem = useCallback(
-    (card) => {
-      if (items.some((item) => cardKey(item) === cardKey(card))) return false;
+  const adicionarItem = useCallback(
+    (cartao) => {
+      if (itens.some((item) => chaveDoCartao(item) === chaveDoCartao(cartao))) {
+        return false;
+      }
 
-      setItems((current) => [
-        { ...card, category: card.category || "watchlist", addedAt: Date.now() },
-        ...current,
+      definirItens((atual) => [
+        {
+          ...cartao,
+          category: cartao.category || "watchlist",
+          addedAt: Date.now(),
+        },
+        ...atual,
       ]);
 
       return true;
     },
-    [items],
+    [itens],
   );
 
-  const removeItem = useCallback((key) => {
-    setItems((current) => current.filter((item) => cardKey(item) !== key));
+  const removerItem = useCallback((chave) => {
+    definirItens((atual) => atual.filter((item) => chaveDoCartao(item) !== chave));
   }, []);
 
-  const updateItem = useCallback((key, changes) => {
-    setItems((current) =>
-      current.map((item) =>
-        cardKey(item) === key ? { ...item, ...changes } : item,
+  const atualizarItem = useCallback((chave, mudancas) => {
+    definirItens((atual) =>
+      atual.map((item) =>
+        chaveDoCartao(item) === chave ? { ...item, ...mudancas } : item,
       ),
     );
   }, []);
 
-  const setCategory = useCallback(
-    (key, category) => updateItem(key, { category }),
-    [updateItem],
+  const definirCategoria = useCallback(
+    (chave, categoria) => atualizarItem(chave, { category: categoria }),
+    [atualizarItem],
   );
 
-  const rateItem = useCallback(
-    (key, userRating) => updateItem(key, { userRating }),
-    [updateItem],
+  const avaliarItem = useCallback(
+    (chave, notaDoUsuario) => atualizarItem(chave, { userRating: notaDoUsuario }),
+    [atualizarItem],
   );
 
-  const clearLibrary = useCallback(() => setItems([]), []);
+  const limparBiblioteca = useCallback(() => definirItens([]), []);
 
-  const isInLibrary = useCallback(
-    (key) => items.some((item) => cardKey(item) === key),
-    [items],
+  const estaNaBiblioteca = useCallback(
+    (chave) => itens.some((item) => chaveDoCartao(item) === chave),
+    [itens],
   );
 
-  const value = useMemo(
+  const valor = useMemo(
     () => ({
-      items,
-      ready,
-      addItem,
-      removeItem,
-      updateItem,
-      setCategory,
-      rateItem,
-      clearLibrary,
-      isInLibrary,
+      itens,
+      pronto,
+      adicionarItem,
+      removerItem,
+      atualizarItem,
+      definirCategoria,
+      avaliarItem,
+      limparBiblioteca,
+      estaNaBiblioteca,
     }),
     [
-      items,
-      ready,
-      addItem,
-      removeItem,
-      updateItem,
-      setCategory,
-      rateItem,
-      clearLibrary,
-      isInLibrary,
+      itens,
+      pronto,
+      adicionarItem,
+      removerItem,
+      atualizarItem,
+      definirCategoria,
+      avaliarItem,
+      limparBiblioteca,
+      estaNaBiblioteca,
     ],
   );
 
   return (
-    <LibraryContext.Provider value={value}>{children}</LibraryContext.Provider>
+    <ContextoBiblioteca.Provider value={valor}>
+      {children}
+    </ContextoBiblioteca.Provider>
   );
 };
 
-export const useLibrary = () => {
-  const context = useContext(LibraryContext);
-  if (!context) {
-    throw new Error("useLibrary precisa estar dentro de <LibraryProvider>.");
+export const useBiblioteca = () => {
+  const contexto = useContext(ContextoBiblioteca);
+  if (!contexto) {
+    throw new Error(
+      "useBiblioteca precisa estar dentro de <ProvedorBiblioteca>.",
+    );
   }
-  return context;
+  return contexto;
 };
 
-export default LibraryContext;
+export default ContextoBiblioteca;

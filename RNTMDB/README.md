@@ -19,7 +19,7 @@ gratuita do **TMDb (The Movie Database)**.
 |---|-----------|----------------|
 | 1 | **LOGIN** — campos Usuário e Senha; botões ENTRAR e CADASTRAR USUÁRIO | `src/pages/login.js` |
 | 2 | **CADASTRAR USUÁRIO** — Nome, Telefone, CPF, E-mail, Curso; botão SALVAR que persiste localmente e volta ao LOGIN | `src/pages/cadastro.js` |
-| 3 | **CARDS** — busca os dados na API e cria cards com imagem, nome e **status**; botões ADD, EXCLUIR e VER MAIS DETALHES | `src/pages/main.js` |
+| 3 | **CARDS** — busca os dados na API e cria cards com imagem, nome e **status**; botões ADD, EXCLUIR e VER DETALHES | `src/pages/main.js` |
 | 4 | **MAIS DETALHES DOS CARDS** — detalhes completos do card selecionado | `src/pages/details.js` |
 
 ### Como cada requisito foi interpretado
@@ -137,7 +137,7 @@ pressione `a` / `i` no terminal para abrir no emulador.
 2. **ENTRAR** → entra na tela **MEUS CARDS**
 3. Na aba **Destaques**, toque em **ADD** em alguns títulos
 4. Use as abas **Quero ver / Assistidos / Favoritos** para organizar
-5. **VER MAIS DETALHES** → sinopse, elenco, trailer, similares, notar com estrelas
+5. **VER DETALHES** → sinopse, elenco, trailer, similares, notar com estrelas
 6. Toque no botão **🎲 O que assistir?** para sortear um título
 7. Toque no ícone **☀️/🌙** no cabeçalho para alternar o tema claro/escuro
 
@@ -145,11 +145,13 @@ pressione `a` / `i` no terminal para abrir no emulador.
 
 ## 4. Estrutura do projeto
 
-A organização segue a do projeto feito em aula (`GitViewer`):
+A organização segue a do projeto feito em aula (`GitViewer`). As **pastas e os arquivos**
+continuam com os nomes em inglês (`pages/`, `styles.js`, `login.js`...), como é comum em
+projetos React Native — o que está em português é o **código dentro dos arquivos**.
 
 ```
 RNTMDB/
-├── App.js                        # Providers (tema + biblioteca) e NavigationContainer
+├── App.js                        # Provedores (tema + biblioteca) e NavigationContainer
 ├── index.js                      # Entrada do Expo
 ├── .env.example                  # Modelo da variável da API Key
 └── src/
@@ -173,6 +175,66 @@ RNTMDB/
         ├── format.js             # Formatação/normalização dos dados do TMDb
         └── validators.js         # Máscaras e validação de CPF, telefone e e-mail
 ```
+
+### De inglês para português
+
+Os **componentes, variáveis, funções, estilos e cores do tema** foram renomeados para
+português dentro dos arquivos. As telas da navegação também usam nomes em português:
+`entrar`, `cadastro`, `cards` e `detalhes`.
+
+| Onde | Antes | Agora |
+|------|-------|-------|
+| Componentes | `MovieCard` · `FormField` · `SegmentTabs` | `CardDeFilme` · `CampoFormulario` · `AbasSegmento` |
+| Contextos | `LibraryContext` · `ThemeContext` | `ContextoBiblioteca` · `ContextoTema` |
+| Estilos | `Card` · `CardPoster` · `RatingBadge` | `Cartao` · `PosterCartao` · `SeloNota` (todos na seção 7) |
+
+**Contextos e hooks**
+
+- `useTheme` → `useTema`, `ThemeProvider` → `ProvedorTema`, `toggleTheme` → `alternarTema`,
+  `isDark` → `temaEscuro`, `colors` → `cores`, `mode` → `modo`
+- `useLibrary` → `useBiblioteca`, `LibraryProvider` → `ProvedorBiblioteca`,
+  `items` → `itens`, `addItem` → `adicionarItem`, `removeItem` → `removerItem`,
+  `isInLibrary` → `estaNaBiblioteca`, `setCategory` → `definirCategoria`,
+  `rateItem` → `avaliarItem`
+
+**Cores do tema**
+
+- `background` → `fundo`, `surface` → `superficie`, `surfaceAlt` → `superficieAlternativa`,
+  `border` → `borda`, `text` → `texto`, `textMuted` → `textoSuave`
+- `primary` → `primaria`, `accent` → `destaque`, `danger` → `perigo`
+- `header` → `cabecalho`, `headerText` → `textoCabecalho`
+- `ratingGood` / `ratingMid` / `ratingBad` → `notaBoa` / `notaMedia` / `notaRuim`
+
+**Funções**
+
+- API: `getTrending` → `buscarDestaques`, `searchTitles` → `buscarTitulos`,
+  `getDetails` → `buscarDetalhes`, `hasApiKey` → `temChaveApi`
+- Formatação: `formatVote` → `formatarNota`, `formatDate` → `formatarData`,
+  `formatRuntime` → `formatarDuracao`, `formatMoney` → `formatarDinheiro`,
+  `posterUrl` → `urlPoster`, `backdropUrl` → `urlBanner`, `profileUrl` → `urlPerfil`,
+  `cardKey` → `chaveDoCartao`, `buildSubtitle` → `montarSubtitulo`,
+  `normalizeDetails` → `normalizarDetalhes`,
+  `normalizeSearchResult` → `normalizarResultadoBusca`,
+  `translateStatus` → `traduzirStatus`, `pluralizeSeasons` → `pluralizarTemporadas`,
+  `pluralizeEpisodes` → `pluralizarEpisodios`
+- Validação: `isValidCPF` → `cpfValido`, `maskCPF` → `mascararCpf`,
+  `isValidPhone` → `telefoneValido`, `maskPhone` → `mascararTelefone`,
+  `isValidEmail` → `emailValido`, `onlyDigits` → `apenasDigitos`
+
+### O que continua em inglês (e por quê)
+
+- **Pastas e arquivos**: `pages/`, `components/`, `contexts/`, `utils/`, `services/`,
+  `config/`, `styles.js`, `routes.js`, `main.js`, `login.js`, `format.js`,
+  `validators.js`. É a convenção usada no projeto feito em aula, e nomes de arquivo em
+  inglês (`login.js`, `styles.js`) são o padrão do ecossistema React Native.
+- **Campos vindos da API do TMDb**: `poster_path`, `vote_average`, `media_type` e os
+  campos do card normalizado (`posterPath`, `voteAverage`, `mediaType`, `statusLabel`...).
+  São os nomes que a API devolve, então manter o mesmo nome permite comparar o código
+  com a documentação do TMDb linha por linha.
+- **Valores de status e categorias gravados no aparelho**: `Released`, `watchlist`,
+  `watched`, `favorite` e as chaves `user`, `library` e `theme` do AsyncStorage.
+  São dados já salvos: mudar essas strings faria o app perder a conta e a lista de cards
+  que o usuário já tinha.
 
 ### Principais dependências
 
@@ -216,7 +278,7 @@ os seguintes princípios:
 - **FAB**: o botão flutuante "O que assistir?" segue o padrão *Floating Action Button*
   (fixo no canto inferior direito, com ação primária).
 - **Superfícies e cantos**: raios de canto consistentes (8–16 px) e separação de
-  conteúdo por superfícies (`surface` / `surfaceAlt`) em vez de linhas pesadas.
+  conteúdo por superfícies (`superficie` / `superficieAlternativa`) em vez de linhas pesadas.
 
 ---
 
@@ -228,3 +290,116 @@ os seguintes princípios:
 | "API Key inválida ou expirada" | A chave foi copiada errada ou é um *token v4* em vez da *API Key v3* |
 | Cards não aparecem em Destaques | Verifique a internet do aparelho; use o botão **Tentar novamente** |
 | Alterei o `.env` mas o aviso da API Key continua aparecendo | O Metro guarda em cache a transformação dos arquivos e **não** invalida esse cache quando o `.env` muda — a chave antiga (vazia) continua no bundle. Reinicie com `npx expo start --clear` |
+
+---
+
+## 7. Dicionário dos estilos (`src/styles.js`)
+
+Todos os estilos são componentes `styled-components` exportados com nome em português.
+A tabela abaixo serve de consulta durante a apresentação: mostra o nome atual, o nome
+antigo (em inglês) e para que o estilo serve.
+
+| Nome no código | Antes (inglês) | Para que serve |
+|----------------|----------------|----------------|
+| `Tela` | `Screen` | Tela base, com o fundo do tema |
+| `TelaCentralizada` | `CenteredScreen` | Tela com o conteúdo no centro |
+| `TituloSecao` | `SectionTitle` | Título de seção (ex.: "Seus dados") |
+| `TextoSuave` | `MutedText` | Texto secundário, mais discreto |
+| `TextoDeErro` | `ErrorText` | Mensagem de erro do formulário |
+| `ContainerAutenticacao` | `AuthContainer` | Container do LOGIN e do CADASTRO |
+| `LogoMarca` | `LogoMark` | Círculo com o ícone do app |
+| `Marca` | `Brand` | Nome "RNTMDB" |
+| `MarcaDestaque` | `BrandHighlight` | Parte "TMDB" em azul |
+| `MarcaSubtitulo` | `BrandSubtitle` | Frase abaixo da marca |
+| `CaixaCampo` | `InputWrapper` | Agrupa rótulo + campo + erro |
+| `RotuloCampo` | `FieldLabel` | Rótulo do campo ("Nome", "CPF"...) |
+| `CampoEntrada` | `Input` | Caixa de digitação do formulário |
+| `BotaoPrincipal` | `PrimaryButton` | Botão cheio (ENTRAR, SALVAR) |
+| `TextoBotaoPrincipal` | `PrimaryButtonText` | Texto do botão cheio |
+| `BotaoContorno` | `OutlineButton` | Botão só com contorno |
+| `TextoBotaoContorno` | `OutlineButtonText` | Texto do botão de contorno |
+| `RolagemFormulario` | `FormScroll` | Rolagem da tela de cadastro |
+| `CorpoFormulario` | `FormBody` | Margem lateral dos campos |
+| `LinhaSaudacao` | `GreetingRow` | Faixa do "Olá, Danilo" |
+| `Saudacao` | `Greeting` | Texto "Olá, nome" |
+| `DicaSaudacao` | `GreetingHint` | Quantos títulos a lista tem |
+| `LinhaBusca` | `SearchRow` | Linha da barra de busca |
+| `CampoBusca` | `SearchInput` | Campo de busca |
+| `BotaoBuscar` | `AddButton` | Botão da lupa |
+| `LinhaAbas` | `SegmentRow` | Linha das abas |
+| `Aba` | `Segment` | Cada aba (Destaques, Assistidos...) |
+| `TextoAba` | `SegmentText` | Texto da aba |
+| `Lista` | `List` | `FlatList` dos cards |
+| `Cartao` | `Card` | Card do filme/série |
+| `PosterCartao` | `CardPoster` | Imagem do pôster no card |
+| `PosterAlternativo` | `PosterFallback` | Quadro quando não há imagem |
+| `InformacoesCartao` | `CardInfo` | Coluna de textos do card |
+| `LinhaTitulo` | `TitleRow` | Título e nota lado a lado |
+| `TituloCartao` | `CardTitle` | Nome do filme/série |
+| `ResumoCartao` | `CardMeta` | Linha "2024 • 2h 15min" |
+| `EtiquetaStatus` | `StatusTag` | Pílula do status |
+| `PontoStatus` | `StatusDot` | Bolinha verde da pílula |
+| `TextoStatus` | `StatusText` | Texto do status ("Lançado") |
+| `SeloNota` | `RatingBadge` | Círculo com a nota do TMDb |
+| `TextoNota` | `RatingText` | Número da nota |
+| `AcoesCartao` | `CardActions` | Linha dos botões do card |
+| `BotaoPequeno` | `SmallButton` | Botão pequeno (ADD, EXCLUIR) |
+| `TextoBotaoPequeno` | `SmallButtonText` | Texto do botão pequeno |
+| `DicaCategoria` | `CategoryHint` | Mostra em que aba o card está |
+| `EstadoVazio` | `EmptyState` | Área de "lista vazia" |
+| `TituloVazio` | `EmptyTitle` | Título do estado vazio |
+| `TextoVazio` | `EmptyText` | Explicação do estado vazio |
+| `CaixaCarregando` | `LoadingBox` | Área do indicador de carregamento |
+| `CaixaAviso` | `WarningBox` | Aviso vermelho da API Key |
+| `TextoAviso` | `WarningText` | Texto do aviso |
+| `CabecalhoResultados` | `ResultsHeader` | Cabeçalho "5 resultados para..." |
+| `BotaoLimpar` | `ClearButton` | Botão LIMPAR da busca |
+| `TextoBotaoLimpar` | `ClearButtonText` | Texto do botão limpar |
+| `RodapeCarregando` | `FooterLoading` | Indicador no fim da lista |
+| `CaixaMensagem` | `FeedbackBox` | Faixa de confirmação ("adicionado") |
+| `TextoMensagem` | `FeedbackText` | Texto da confirmação |
+| `BotaoRoleta` | `DiceButton` | FAB "O que assistir?" |
+| `TextoBotaoRoleta` | `DiceButtonText` | Texto do FAB |
+| `FundoModal` | `ModalOverlay` | Fundo escuro do modal |
+| `QuadroModal` | `ModalCard` | Quadro branco do modal |
+| `TituloModal` | `ModalTitle` | Título do sorteio |
+| `TextoModal` | `ModalText` | Texto do sorteio |
+| `RolagemDetalhes` | `DetailScroll` | Rolagem da tela de detalhes |
+| `CaixaBanner` | `BackdropWrapper` | Faixa da imagem de fundo |
+| `ImagemBanner` | `BackdropImage` | Imagem de fundo |
+| `CorpoDetalhes` | `DetailBody` | Corpo da tela de detalhes |
+| `TopoDetalhes` | `DetailTop` | Pôster + título sobrepostos |
+| `PosterDetalhes` | `DetailPoster` | Pôster grande |
+| `InfoTopoDetalhes` | `DetailTopInfo` | Título e ano ao lado do pôster |
+| `TituloDetalhes` | `DetailTitle` | Título na tela de detalhes |
+| `ResumoDetalhes` | `DetailMeta` | Ano e status |
+| `EtiquetaTipo` | `TypeTag` | Selo FILME/SÉRIE |
+| `TextoEtiquetaTipo` | `TypeTagText` | Texto do selo |
+| `LinhaEtiquetas` | `ChipRow` | Linha das etiquetas de gênero |
+| `Etiqueta` | `Chip` | Etiqueta de um gênero |
+| `TextoEtiqueta` | `ChipText` | Nome do gênero |
+| `Sinopse` | `Overview` | Texto da sinopse |
+| `GradeInformacoes` | `InfoGrid` | Grade de informações técnicas |
+| `CaixaInformacao` | `InfoBox` | Um bloco de informação |
+| `RotuloInformacao` | `InfoLabel` | Rótulo ("Orçamento") |
+| `ValorInformacao` | `InfoValue` | Valor ("US$ 1.500.000") |
+| `LinhaAcoes` | `ActionRow` | Linha dos botões de ação |
+| `BotaoPilula` | `PillButton` | Botão arredondado |
+| `TextoBotaoPilula` | `PillButtonText` | Texto do botão arredondado |
+| `LinhaEstrelas` | `StarsRow` | Linha das 5 estrelas |
+| `BotaoEstrela` | `StarButton` | Cada estrela clicável |
+| `TituloBloco` | `BlockTitle` | Título de bloco ("Sinopse", "Elenco") |
+| `ListaElenco` | `CastList` | Lista horizontal do elenco |
+| `ListaSimilares` | `SimilarList` | Lista horizontal dos similares |
+| `CardAtor` | `CastCard` | Card de um ator |
+| `FotoAtor` | `CastAvatar` | Foto redonda do ator |
+| `NomeAtor` | `CastName` | Nome do ator |
+| `PapelAtor` | `CastRole` | Personagem que ele faz |
+| `CardSimilar` | `SimilarCard` | Card de um título similar |
+| `PosterSimilar` | `SimilarPoster` | Pôster do similar |
+| `NomeSimilar` | `SimilarName` | Nome do similar |
+| `AnoSimilar` | `SimilarYear` | Ano e nota do similar |
+
+> As props que servem só para o estilo também foram traduzidas: `$invalid` → `$invalido`,
+> `$active` → `$ativo`, `$loading` → `$carregando`, `$score` → `$nota`,
+> `$variant` → `$variante` (com os valores `danger` → `perigo` e `done` → `concluido`).

@@ -1,74 +1,68 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Linking,
-  Share,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, Linking, Share, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import {
-  ActionRow,
-  BackdropImage,
-  BlockTitle,
-  BackdropWrapper,
-  CastAvatar,
-  CastCard,
-  CastList,
-  CastName,
-  CastRole,
-  Chip,
-  ChipRow,
-  ChipText,
-  DetailBody,
-  DetailMeta,
-  DetailPoster,
-  DetailScroll,
-  DetailTitle,
-  DetailTop,
-  DetailTopInfo,
-  InfoBox,
-  InfoGrid,
-  InfoLabel,
-  InfoValue,
-  LoadingBox,
-  MutedText,
-  Overview,
-  PillButton,
-  PillButtonText,
-  PosterFallback,
-  SimilarCard,
-  SimilarList,
-  SimilarName,
-  SimilarPoster,
-  SimilarYear,
-  StarsRow,
-  StarButton,
-  TypeTag,
-  TypeTagText,
+  AnoSimilar,
+  BotaoEstrela,
+  BotaoPilula,
+  CaixaBanner,
+  CaixaCarregando,
+  CaixaInformacao,
+  CardAtor,
+  CardSimilar,
+  CorpoDetalhes,
+  Etiqueta,
+  EtiquetaTipo,
+  FotoAtor,
+  GradeInformacoes,
+  ImagemBanner,
+  InfoTopoDetalhes,
+  LinhaAcoes,
+  LinhaEstrelas,
+  LinhaEtiquetas,
+  ListaElenco,
+  ListaSimilares,
+  NomeAtor,
+  NomeSimilar,
+  PapelAtor,
+  PosterAlternativo,
+  PosterDetalhes,
+  PosterSimilar,
+  ResumoDetalhes,
+  RolagemDetalhes,
+  RotuloInformacao,
+  Sinopse,
+  TextoBotaoPilula,
+  TextoEtiqueta,
+  TextoEtiquetaTipo,
+  TextoSuave,
+  TituloBloco,
+  TituloDetalhes,
+  TopoDetalhes,
+  ValorInformacao,
 } from "../styles";
-import { getDetails } from "../services/api";
-import { hasApiKey } from "../config/tmdb";
-import { useLibrary } from "../contexts/LibraryContext";
-import { useTheme } from "../contexts/ThemeContext";
+import { buscarDetalhes } from "../services/api";
+import { temChaveApi } from "../config/tmdb";
+import { useBiblioteca } from "../contexts/LibraryContext";
+import { useTema } from "../contexts/ThemeContext";
 import {
-  CATEGORIES,
-  CATEGORY_KEYS,
-  backdropUrl,
-  cardKey,
-  formatDate,
-  formatMoney,
-  formatNumber,
-  formatRuntime,
-  formatVote,
-  formatYear,
-  normalizeDetails,
-  normalizeSearchResult,
-  pluralizeEpisodes,
-  pluralizeSeasons,
-  posterUrl,
-  profileUrl,
+  CATEGORIAS,
+  CHAVES_CATEGORIAS,
+  chaveDoCartao,
+  formatarAno,
+  formatarData,
+  formatarDinheiro,
+  formatarDuracao,
+  formatarNota,
+  formatarNumero,
+  normalizarDetalhes,
+  normalizarResultadoBusca,
+  pluralizarEpisodios,
+  pluralizarTemporadas,
+  urlBanner,
+  urlPerfil,
+  urlPoster,
 } from "../utils/format";
 
 /**
@@ -78,174 +72,188 @@ import {
  * (sinopse, elenco, trailer e similares) e permite gerenciar o título
  * dentro da lista do usuário.
  */
-const MAX_STARS = 5;
+const MAX_ESTRELAS = 5;
 
-const Details = ({ navigation, route }) => {
-  const { card: initialCard } = route.params;
-  const { colors } = useTheme();
+const Detalhes = ({ navigation, route }) => {
+  const { cartao: cartaoInicial } = route.params;
+  const { cores } = useTema();
   const {
-    items,
-    addItem,
-    removeItem,
-    setCategory,
-    rateItem,
-    isInLibrary,
-  } = useLibrary();
+    itens,
+    adicionarItem,
+    removerItem,
+    definirCategoria,
+    avaliarItem,
+    estaNaBiblioteca,
+  } = useBiblioteca();
 
-  const [card, setCard] = useState(initialCard);
-  const [payload, setPayload] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [cartao, definirCartao] = useState(cartaoInicial);
+  const [dadosCompletos, definirDadosCompletos] = useState(null);
+  const [carregando, definirCarregando] = useState(true);
 
-  const key = cardKey(card);
-  const inLibrary = isInLibrary(key);
-  const savedCard = items.find((item) => cardKey(item) === key);
+  const chave = chaveDoCartao(cartao);
+  const naBiblioteca = estaNaBiblioteca(chave);
+  const cartaoSalvo = itens.find((item) => chaveDoCartao(item) === chave);
 
   // Completa o card com os dados detalhados da API.
   useEffect(() => {
-    let active = true;
+    let ativo = true;
 
-    if (!hasApiKey()) {
-      setLoading(false);
+    if (!temChaveApi()) {
+      definirCarregando(false);
       return undefined;
     }
 
-    setLoading(true);
+    definirCarregando(true);
 
-    getDetails(initialCard.mediaType, initialCard.id)
-      .then((response) => {
-        if (!active) return;
-        setPayload(response.data);
-        setCard((current) => ({
-          ...current,
-          ...normalizeDetails(initialCard.mediaType, response.data),
+    buscarDetalhes(cartaoInicial.mediaType, cartaoInicial.id)
+      .then((resposta) => {
+        if (!ativo) return;
+        definirDadosCompletos(resposta.data);
+        definirCartao((atual) => ({
+          ...atual,
+          ...normalizarDetalhes(cartaoInicial.mediaType, resposta.data),
         }));
       })
-      .catch((error) => {
-        if (active) {
+      .catch((erro) => {
+        if (ativo) {
           Alert.alert(
             "Erro ao carregar detalhes",
-            error.friendlyMessage || "Tente novamente mais tarde.",
+            erro.friendlyMessage || "Tente novamente mais tarde.",
           );
         }
       })
       .finally(() => {
-        if (active) setLoading(false);
+        if (ativo) definirCarregando(false);
       });
 
     return () => {
-      active = false;
+      ativo = false;
     };
-  }, [initialCard.mediaType, initialCard.id]);
+  }, [cartaoInicial.mediaType, cartaoInicial.id]);
 
   useEffect(() => {
-    navigation.setOptions({ title: card.title });
-  }, [navigation, card.title]);
+    navigation.setOptions({ title: cartao.title });
+  }, [navigation, cartao.title]);
 
-  const cast = payload?.credits?.cast?.slice(0, 20) || [];
+  const elenco = dadosCompletos?.credits?.cast?.slice(0, 20) || [];
 
   const trailer = useMemo(() => {
-    const videos = payload?.videos?.results || [];
+    const videos = dadosCompletos?.videos?.results || [];
     return (
       videos.find((video) => video.site === "YouTube" && video.type === "Trailer") ||
       videos.find((video) => video.site === "YouTube") ||
       null
     );
-  }, [payload]);
+  }, [dadosCompletos]);
 
-  const similar = useMemo(
+  const similares = useMemo(
     () =>
-      (payload?.similar?.results || [])
+      (dadosCompletos?.similar?.results || [])
         .filter((item) => item.poster_path)
         .slice(0, 12),
-    [payload],
+    [dadosCompletos],
   );
 
-  const infoItems = useMemo(
+  const itensInformacao = useMemo(
     () =>
       [
         {
-          label: "Nota TMDb",
-          value: card.voteCount ? `${formatVote(card.voteAverage)} / 10` : null,
+          rotulo: "Nota TMDb",
+          valor: cartao.voteCount
+            ? `${formatarNota(cartao.voteAverage)} / 10`
+            : null,
         },
-        { label: "Status", value: card.statusLabel },
-        { label: "Lançamento", value: formatDate(card.releaseDate) },
-        { label: "Duração", value: card.runtime ? formatRuntime(card.runtime) : null },
+        { rotulo: "Status", valor: cartao.statusLabel },
+        { rotulo: "Lançamento", valor: formatarData(cartao.releaseDate) },
         {
-          label: "Temporadas",
-          value: card.seasons ? pluralizeSeasons(card.seasons) : null,
+          rotulo: "Duração",
+          valor: cartao.runtime ? formatarDuracao(cartao.runtime) : null,
         },
         {
-          label: "Episódios",
-          value: card.episodes ? pluralizeEpisodes(card.episodes) : null,
+          rotulo: "Temporadas",
+          valor: cartao.seasons ? pluralizarTemporadas(cartao.seasons) : null,
         },
-        { label: "Votos", value: card.voteCount ? formatNumber(card.voteCount) : null },
-        { label: "Orçamento", value: formatMoney(card.budget) },
-        { label: "Receita", value: formatMoney(card.revenue) },
-      ].filter((item) => item.value),
-    [card],
+        {
+          rotulo: "Episódios",
+          valor: cartao.episodes ? pluralizarEpisodios(cartao.episodes) : null,
+        },
+        {
+          rotulo: "Votos",
+          valor: cartao.voteCount ? formatarNumero(cartao.voteCount) : null,
+        },
+        { rotulo: "Orçamento", valor: formatarDinheiro(cartao.budget) },
+        { rotulo: "Receita", valor: formatarDinheiro(cartao.revenue) },
+      ].filter((item) => item.valor),
+    [cartao],
   );
 
-  const poster = posterUrl(card.posterPath);
-  const backdrop = backdropUrl(card.backdropPath);
-  const rating = savedCard?.userRating || 0;
+  const poster = urlPoster(cartao.posterPath);
+  const banner = urlBanner(cartao.backdropPath);
+  const nota = cartaoSalvo?.userRating || 0;
 
   /* ---------------------------------------------------------------- *
    * Ações
    * ---------------------------------------------------------------- */
 
-  const handleAddToList = () => {
-    const added = addItem(card);
-    if (added) Alert.alert("Adicionado!", `"${card.title}" entrou em "${CATEGORIES.watchlist}".`);
-    else Alert.alert("Já está na lista", `"${card.title}" já foi adicionado.`);
+  const adicionarALista = () => {
+    const adicionado = adicionarItem(cartao);
+    if (adicionado) {
+      Alert.alert(
+        "Adicionado!",
+        `"${cartao.title}" entrou em "${CATEGORIAS.watchlist}".`,
+      );
+    } else {
+      Alert.alert("Já está na lista", `"${cartao.title}" já foi adicionado.`);
+    }
   };
 
-  const handleRemove = () => {
-    Alert.alert("Excluir card", `Remover "${card.title}" da sua lista?`, [
+  const remover = () => {
+    Alert.alert("Excluir card", `Remover "${cartao.title}" da sua lista?`, [
       { text: "Cancelar", style: "cancel" },
       {
         text: "Excluir",
         style: "destructive",
         onPress: () => {
-          removeItem(key);
+          removerItem(chave);
           navigation.goBack();
         },
       },
     ]);
   };
 
-  const handleOpenTrailer = () => {
+  const abrirTrailer = () => {
     if (!trailer) return;
     Linking.openURL(`https://www.youtube.com/watch?v=${trailer.key}`).catch(() =>
       Alert.alert("Erro", "Não foi possível abrir o trailer."),
     );
   };
 
-  const handleShare = async () => {
+  const compartilhar = async () => {
     try {
       await Share.share({
-        message: `${card.title} (${card.year}) — nota ${formatVote(
-          card.voteAverage,
-        )}/10 no TMDb.${card.overview ? `\n\n${card.overview}` : ""}`,
+        message: `${cartao.title} (${cartao.year}) — nota ${formatarNota(
+          cartao.voteAverage,
+        )}/10 no TMDb.${cartao.overview ? `\n\n${cartao.overview}` : ""}`,
       });
     } catch {
       // Usuário cancelou o compartilhamento: nada a fazer.
     }
   };
 
-  const handleRate = (stars) => {
-    if (!inLibrary) {
+  const avaliar = (estrelas) => {
+    if (!naBiblioteca) {
       Alert.alert(
         "Adicione o título primeiro",
         "Toque em ADICIONAR À MINHA LISTA para poder dar a sua nota.",
       );
       return;
     }
-    rateItem(key, rating === stars ? 0 : stars);
+    avaliarItem(chave, nota === estrelas ? 0 : estrelas);
   };
 
-  const openSimilar = (item) =>
-    navigation.push("details", {
-      card: normalizeSearchResult({ ...item, media_type: card.mediaType }),
+  const abrirSimilar = (item) =>
+    navigation.push("detalhes", {
+      cartao: normalizarResultadoBusca({ ...item, media_type: cartao.mediaType }),
     });
 
   /* ---------------------------------------------------------------- *
@@ -253,167 +261,167 @@ const Details = ({ navigation, route }) => {
    * ---------------------------------------------------------------- */
 
   return (
-    <DetailScroll>
-      <BackdropWrapper>
-        {backdrop ? (
-          <BackdropImage source={{ uri: backdrop }} />
-        ) : (
-          <View style={{ flex: 1 }} />
-        )}
-      </BackdropWrapper>
+    <RolagemDetalhes>
+      <CaixaBanner>
+        {banner ? <ImagemBanner source={{ uri: banner }} /> : <View style={{ flex: 1 }} />}
+      </CaixaBanner>
 
-      <DetailBody>
-        <DetailTop>
+      <CorpoDetalhes>
+        <TopoDetalhes>
           {poster ? (
-            <DetailPoster source={{ uri: poster }} />
+            <PosterDetalhes source={{ uri: poster }} />
           ) : (
-            <PosterFallback>
-              <MaterialIcons name="movie" size={28} color={colors.textMuted} />
-            </PosterFallback>
+            <PosterAlternativo>
+              <MaterialIcons name="movie" size={28} color={cores.textoSuave} />
+            </PosterAlternativo>
           )}
 
-          <DetailTopInfo>
-            <TypeTag>
-              <TypeTagText>
-                {card.mediaType === "tv" ? "Série" : "Filme"}
-              </TypeTagText>
-            </TypeTag>
-            <DetailTitle>{card.title}</DetailTitle>
-            <DetailMeta>
-              {card.year}
-              {card.statusLabel ? ` • ${card.statusLabel}` : ""}
-            </DetailMeta>
-          </DetailTopInfo>
-        </DetailTop>
+          <InfoTopoDetalhes>
+            <EtiquetaTipo>
+              <TextoEtiquetaTipo>
+                {cartao.mediaType === "tv" ? "Série" : "Filme"}
+              </TextoEtiquetaTipo>
+            </EtiquetaTipo>
+            <TituloDetalhes>{cartao.title}</TituloDetalhes>
+            <ResumoDetalhes>
+              {cartao.year}
+              {cartao.statusLabel ? ` • ${cartao.statusLabel}` : ""}
+            </ResumoDetalhes>
+          </InfoTopoDetalhes>
+        </TopoDetalhes>
 
-        {loading ? (
-          <LoadingBox>
-            <ActivityIndicator color={colors.primary} />
-            <MutedText style={{ marginTop: 10 }}>
+        {carregando ? (
+          <CaixaCarregando>
+            <ActivityIndicator color={cores.primaria} />
+            <TextoSuave style={{ marginTop: 10 }}>
               Buscando detalhes no TMDb...
-            </MutedText>
-          </LoadingBox>
+            </TextoSuave>
+          </CaixaCarregando>
         ) : null}
 
-        {card.genres?.length ? (
-          <ChipRow>
-            {card.genres.map((genre) => (
-              <Chip key={genre.id}>
-                <ChipText>{genre.name}</ChipText>
-              </Chip>
+        {cartao.genres?.length ? (
+          <LinhaEtiquetas>
+            {cartao.genres.map((genero) => (
+              <Etiqueta key={genero.id}>
+                <TextoEtiqueta>{genero.name}</TextoEtiqueta>
+              </Etiqueta>
             ))}
-          </ChipRow>
+          </LinhaEtiquetas>
         ) : null}
 
-        {card.overview ? (
+        {cartao.overview ? (
           <>
-            <BlockTitle>Sinopse</BlockTitle>
-            <Overview>{card.overview}</Overview>
+            <TituloBloco>Sinopse</TituloBloco>
+            <Sinopse>{cartao.overview}</Sinopse>
           </>
         ) : null}
 
         {/* Informações completas do requisito "mais detalhes" */}
-        <BlockTitle>Informações</BlockTitle>
-        <InfoGrid>
-          {infoItems.map((item) => (
-            <InfoBox key={item.label}>
-              <InfoLabel>{item.label}</InfoLabel>
-              <InfoValue>{item.value}</InfoValue>
-            </InfoBox>
+        <TituloBloco>Informações</TituloBloco>
+        <GradeInformacoes>
+          {itensInformacao.map((item) => (
+            <CaixaInformacao key={item.rotulo}>
+              <RotuloInformacao>{item.rotulo}</RotuloInformacao>
+              <ValorInformacao>{item.valor}</ValorInformacao>
+            </CaixaInformacao>
           ))}
-        </InfoGrid>
+        </GradeInformacoes>
 
         {/* Minha avaliação (nota pessoal de 1 a 5 estrelas) */}
-        <BlockTitle>Minha avaliação</BlockTitle>
-        <StarsRow>
-          {Array.from({ length: MAX_STARS }).map((_, index) => {
-            const value = index + 1;
+        <TituloBloco>Minha avaliação</TituloBloco>
+        <LinhaEstrelas>
+          {Array.from({ length: MAX_ESTRELAS }).map((_, indice) => {
+            const valor = indice + 1;
             return (
-              <StarButton key={value} onPress={() => handleRate(value)}>
+              <BotaoEstrela key={valor} onPress={() => avaliar(valor)}>
                 <MaterialIcons
-                  name={value <= rating ? "star" : "star-border"}
+                  name={valor <= nota ? "star" : "star-border"}
                   size={28}
-                  color={value <= rating ? colors.ratingMid : colors.textMuted}
+                  color={valor <= nota ? cores.notaMedia : cores.textoSuave}
                 />
-              </StarButton>
+              </BotaoEstrela>
             );
           })}
-        </StarsRow>
+        </LinhaEstrelas>
 
         {/* Ações */}
-        <ActionRow>
+        <LinhaAcoes>
           {trailer ? (
-            <PillButton onPress={handleOpenTrailer}>
-              <MaterialIcons name="play-circle-outline" size={16} color={colors.text} />
-              <PillButtonText>Assistir trailer</PillButtonText>
-            </PillButton>
+            <BotaoPilula onPress={abrirTrailer}>
+              <MaterialIcons
+                name="play-circle-outline"
+                size={16}
+                color={cores.texto}
+              />
+              <TextoBotaoPilula>Assistir trailer</TextoBotaoPilula>
+            </BotaoPilula>
           ) : null}
 
-          <PillButton onPress={handleShare}>
-            <MaterialIcons name="share" size={16} color={colors.text} />
-            <PillButtonText>Compartilhar</PillButtonText>
-          </PillButton>
+          <BotaoPilula onPress={compartilhar}>
+            <MaterialIcons name="share" size={16} color={cores.texto} />
+            <TextoBotaoPilula>Compartilhar</TextoBotaoPilula>
+          </BotaoPilula>
 
-          {!inLibrary ? (
-            <PillButton $active onPress={handleAddToList}>
+          {!naBiblioteca ? (
+            <BotaoPilula $ativo onPress={adicionarALista}>
               <MaterialIcons name="add-circle-outline" size={16} color="#06283d" />
-              <PillButtonText $active>Adicionar à minha lista</PillButtonText>
-            </PillButton>
+              <TextoBotaoPilula $ativo>Adicionar à minha lista</TextoBotaoPilula>
+            </BotaoPilula>
           ) : null}
-        </ActionRow>
+        </LinhaAcoes>
 
         {/* Troca de categoria do card salvo */}
-        {inLibrary ? (
+        {naBiblioteca ? (
           <>
-            <BlockTitle>Onde este título está salvo</BlockTitle>
-            <ActionRow>
-              {CATEGORY_KEYS.map((category) => (
-                <PillButton
-                  key={category}
-                  $active={savedCard?.category === category}
-                  onPress={() => setCategory(key, category)}
+            <TituloBloco>Onde este título está salvo</TituloBloco>
+            <LinhaAcoes>
+              {CHAVES_CATEGORIAS.map((categoria) => (
+                <BotaoPilula
+                  key={categoria}
+                  $ativo={cartaoSalvo?.category === categoria}
+                  onPress={() => definirCategoria(chave, categoria)}
                 >
-                  <PillButtonText $active={savedCard?.category === category}>
-                    {CATEGORIES[category]}
-                  </PillButtonText>
-                </PillButton>
+                  <TextoBotaoPilula $ativo={cartaoSalvo?.category === categoria}>
+                    {CATEGORIAS[categoria]}
+                  </TextoBotaoPilula>
+                </BotaoPilula>
               ))}
 
-              <PillButton $variant="danger" onPress={handleRemove}>
+              <BotaoPilula $variante="perigo" onPress={remover}>
                 <MaterialIcons name="delete-outline" size={16} color="#FFFFFF" />
-                <PillButtonText $variant="danger">Excluir</PillButtonText>
-              </PillButton>
-            </ActionRow>
+                <TextoBotaoPilula $variante="perigo">Excluir</TextoBotaoPilula>
+              </BotaoPilula>
+            </LinhaAcoes>
           </>
         ) : null}
 
         {/* Elenco principal */}
-        {cast.length > 0 ? (
+        {elenco.length > 0 ? (
           <>
-            <BlockTitle>Elenco principal</BlockTitle>
-            <CastList
-              data={cast}
-              keyExtractor={(member) => String(member.id)}
-              renderItem={({ item: member }) => {
-                const avatar = profileUrl(member.profile_path);
+            <TituloBloco>Elenco principal</TituloBloco>
+            <ListaElenco
+              data={elenco}
+              keyExtractor={(membro) => String(membro.id)}
+              renderItem={({ item: membro }) => {
+                const avatar = urlPerfil(membro.profile_path);
                 return (
-                  <CastCard>
+                  <CardAtor>
                     {avatar ? (
-                      <CastAvatar source={{ uri: avatar }} />
+                      <FotoAtor source={{ uri: avatar }} />
                     ) : (
-                      <PosterFallback
+                      <PosterAlternativo
                         style={{ width: 68, height: 68, borderRadius: 34 }}
                       >
                         <MaterialIcons
                           name="person-outline"
                           size={26}
-                          color={colors.textMuted}
+                          color={cores.textoSuave}
                         />
-                      </PosterFallback>
+                      </PosterAlternativo>
                     )}
-                    <CastName>{member.name}</CastName>
-                    <CastRole>{member.character}</CastRole>
-                  </CastCard>
+                    <NomeAtor>{membro.name}</NomeAtor>
+                    <PapelAtor>{membro.character}</PapelAtor>
+                  </CardAtor>
                 );
               }}
             />
@@ -421,28 +429,28 @@ const Details = ({ navigation, route }) => {
         ) : null}
 
         {/* Títulos similares: tocar abre os detalhes desse outro título */}
-        {similar.length > 0 ? (
+        {similares.length > 0 ? (
           <>
-            <BlockTitle>Quem viu, também gostou</BlockTitle>
-            <SimilarList
-              data={similar}
+            <TituloBloco>Quem viu, também gostou</TituloBloco>
+            <ListaSimilares
+              data={similares}
               keyExtractor={(item) => String(item.id)}
               renderItem={({ item }) => (
-                <SimilarCard onPress={() => openSimilar(item)}>
-                  <SimilarPoster source={{ uri: posterUrl(item.poster_path) }} />
-                  <SimilarName>{item.title || item.name}</SimilarName>
-                  <SimilarYear>
-                    {formatYear(item.release_date || item.first_air_date)} • nota{" "}
-                    {formatVote(item.vote_average)}
-                  </SimilarYear>
-                </SimilarCard>
+                <CardSimilar onPress={() => abrirSimilar(item)}>
+                  <PosterSimilar source={{ uri: urlPoster(item.poster_path) }} />
+                  <NomeSimilar>{item.title || item.name}</NomeSimilar>
+                  <AnoSimilar>
+                    {formatarAno(item.release_date || item.first_air_date)} • nota{" "}
+                    {formatarNota(item.vote_average)}
+                  </AnoSimilar>
+                </CardSimilar>
               )}
             />
           </>
         ) : null}
-      </DetailBody>
-    </DetailScroll>
+      </CorpoDetalhes>
+    </RolagemDetalhes>
   );
 };
 
-export default Details;
+export default Detalhes;

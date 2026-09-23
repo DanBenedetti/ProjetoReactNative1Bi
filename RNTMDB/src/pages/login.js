@@ -4,20 +4,20 @@ import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-import FormField from "../components/FormField";
+import CampoFormulario from "../components/FormField";
 import {
-  Brand,
-  BrandHighlight,
-  BrandSubtitle,
-  FormScroll,
-  LogoMark,
-  MutedText,
-  OutlineButton,
-  OutlineButtonText,
-  PrimaryButton,
-  PrimaryButtonText,
+  BotaoContorno,
+  BotaoPrincipal,
+  LogoMarca,
+  Marca,
+  MarcaDestaque,
+  MarcaSubtitulo,
+  RolagemFormulario,
+  TextoBotaoContorno,
+  TextoBotaoPrincipal,
+  TextoSuave,
 } from "../styles";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTema } from "../contexts/ThemeContext";
 
 /**
  * Tela 1 - LOGIN
@@ -26,39 +26,39 @@ import { useTheme } from "../contexts/ThemeContext";
  *
  * O "Usuário" é o e-mail informado no cadastro.
  */
-const Login = () => {
-  const navigation = useNavigation();
-  const route = useRoute();
-  const { colors } = useTheme();
+const Entrar = () => {
+  const navegacao = useNavigation();
+  const rota = useRoute();
+  const { cores } = useTema();
 
-  const [form, setForm] = useState({ usuario: "", senha: "" });
-  const [loading, setLoading] = useState(false);
+  const [formulario, definirFormulario] = useState({ usuario: "", senha: "" });
+  const [carregando, definirCarregando] = useState(false);
 
   // Quando o cadastro termina, o e-mail volta como parâmetro e já vem preenchido.
   useEffect(() => {
-    const email = route.params?.email;
+    const email = rota.params?.email;
     if (email) {
-      setForm((current) => ({ ...current, usuario: email, senha: "" }));
+      definirFormulario((atual) => ({ ...atual, usuario: email, senha: "" }));
     }
-  }, [route.params?.email]);
+  }, [rota.params?.email]);
 
-  const handleChange = (key) => (value) =>
-    setForm((current) => ({ ...current, [key]: value }));
+  const alterarCampo = (campo) => (valor) =>
+    definirFormulario((atual) => ({ ...atual, [campo]: valor }));
 
-  const handleLogin = async () => {
-    const usuario = form.usuario.trim();
+  const fazerLogin = async () => {
+    const usuario = formulario.usuario.trim();
 
-    if (!usuario || !form.senha) {
+    if (!usuario || !formulario.senha) {
       Alert.alert("Atenção", "Preencha o usuário e a senha.");
       return;
     }
 
     try {
-      setLoading(true);
+      definirCarregando(true);
 
       // Os dados do usuário ficam salvos localmente (AsyncStorage = LocalStorage do RN).
-      const stored = await AsyncStorage.getItem("user");
-      if (!stored) {
+      const armazenado = await AsyncStorage.getItem("user");
+      if (!armazenado) {
         Alert.alert(
           "Nenhum usuário cadastrado",
           "Toque em CADASTRAR USUÁRIO para criar a sua conta.",
@@ -66,25 +66,26 @@ const Login = () => {
         return;
       }
 
-      const user = JSON.parse(stored);
+      const usuarioCadastrado = JSON.parse(armazenado);
       const usuarioConfere =
-        String(user.email || "").toLowerCase() === usuario.toLowerCase();
-      const senhaConfere = user.senha === form.senha;
+        String(usuarioCadastrado.email || "").toLowerCase() ===
+        usuario.toLowerCase();
+      const senhaConfere = usuarioCadastrado.senha === formulario.senha;
 
       if (usuarioConfere && senhaConfere) {
-        navigation.navigate("main");
+        navegacao.navigate("cards");
       } else {
         Alert.alert("Acesso negado", "Usuário ou senha inválidos.");
       }
-    } catch (error) {
+    } catch (erro) {
       Alert.alert("Erro", "Não foi possível ler os dados do usuário.");
     } finally {
-      setLoading(false);
+      definirCarregando(false);
     }
   };
 
   return (
-    <FormScroll
+    <RolagemFormulario
       contentContainerStyle={{
         flexGrow: 1,
         justifyContent: "center",
@@ -93,50 +94,52 @@ const Login = () => {
         paddingBottom: 40,
       }}
     >
-      <LogoMark>
-        <MaterialIcons name="movie" size={34} color={colors.primary} />
-      </LogoMark>
+      <LogoMarca>
+        <MaterialIcons name="movie" size={34} color={cores.primaria} />
+      </LogoMarca>
 
-      <Brand>
+      <Marca>
         RN
-        <BrandHighlight>TMDB</BrandHighlight>
-      </Brand>
-      <BrandSubtitle>
+        <MarcaDestaque>TMDB</MarcaDestaque>
+      </Marca>
+      <MarcaSubtitulo>
         Monte a sua lista de filmes e séries e descubra o que assistir hoje.
-      </BrandSubtitle>
+      </MarcaSubtitulo>
 
-      <FormField
-        label="Usuário"
+      <CampoFormulario
+        rotulo="Usuário"
         placeholder="Digite seu e-mail"
         keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
-        value={form.usuario}
-        onChangeText={handleChange("usuario")}
+        value={formulario.usuario}
+        onChangeText={alterarCampo("usuario")}
       />
 
-      <FormField
-        label="Senha"
+      <CampoFormulario
+        rotulo="Senha"
         placeholder="Digite sua senha"
         secureTextEntry
         autoCapitalize="none"
-        value={form.senha}
-        onChangeText={handleChange("senha")}
+        value={formulario.senha}
+        onChangeText={alterarCampo("senha")}
       />
 
-      <PrimaryButton onPress={handleLogin} disabled={loading}>
-        <PrimaryButtonText>{loading ? "Entrando..." : "Entrar"}</PrimaryButtonText>
-      </PrimaryButton>
+      <BotaoPrincipal onPress={fazerLogin} disabled={carregando}>
+        <TextoBotaoPrincipal>
+          {carregando ? "Entrando..." : "Entrar"}
+        </TextoBotaoPrincipal>
+      </BotaoPrincipal>
 
-      <OutlineButton onPress={() => navigation.navigate("cadastro")}>
-        <OutlineButtonText>Cadastrar usuário</OutlineButtonText>
-      </OutlineButton>
+      <BotaoContorno onPress={() => navegacao.navigate("cadastro")}>
+        <TextoBotaoContorno>Cadastrar usuário</TextoBotaoContorno>
+      </BotaoContorno>
 
-      <MutedText style={{ marginTop: 22, textAlign: "center" }}>
+      <TextoSuave style={{ marginTop: 22, textAlign: "center" }}>
         Os dados ficam salvos apenas neste aparelho.
-      </MutedText>
-    </FormScroll>
+      </TextoSuave>
+    </RolagemFormulario>
   );
 };
 
-export default Login;
+export default Entrar;

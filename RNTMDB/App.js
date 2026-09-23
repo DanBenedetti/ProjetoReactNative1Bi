@@ -7,34 +7,34 @@ import {
 } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 
-import Routes from "./src/routes";
-import { LibraryProvider } from "./src/contexts/LibraryContext";
-import { ThemeProvider, useTheme } from "./src/contexts/ThemeContext";
+import Rotas from "./src/routes";
+import { ProvedorBiblioteca } from "./src/contexts/LibraryContext";
+import { ProvedorTema, useTema } from "./src/contexts/ThemeContext";
 
 /**
  * Aplica o tema (claro/escuro) também na navegação, para o fundo das telas
  * e o cabeçalho acompanharem a escolha do usuário.
  */
-const Navigation = () => {
-  const { mode, colors } = useTheme();
-  const base = mode === "dark" ? DarkTheme : DefaultTheme;
+const Navegacao = () => {
+  const { modo, cores } = useTema();
+  const base = modo === "dark" ? DarkTheme : DefaultTheme;
 
-  const navigationTheme = {
+  const temaNavegacao = {
     ...base,
     colors: {
       ...base.colors,
-      background: colors.background,
-      card: colors.header,
-      text: colors.text,
-      primary: colors.primary,
-      border: colors.border,
+      background: cores.fundo,
+      card: cores.cabecalho,
+      text: cores.texto,
+      primary: cores.primaria,
+      border: cores.borda,
     },
   };
 
   return (
-    <NavigationContainer theme={navigationTheme}>
+    <NavigationContainer theme={temaNavegacao}>
       <StatusBar style="light" />
-      <Routes />
+      <Rotas />
     </NavigationContainer>
   );
 };
@@ -42,11 +42,11 @@ const Navigation = () => {
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider>
-        <LibraryProvider>
-          <Navigation />
-        </LibraryProvider>
-      </ThemeProvider>
+      <ProvedorTema>
+        <ProvedorBiblioteca>
+          <Navegacao />
+        </ProvedorBiblioteca>
+      </ProvedorTema>
     </GestureHandlerRootView>
   );
 }

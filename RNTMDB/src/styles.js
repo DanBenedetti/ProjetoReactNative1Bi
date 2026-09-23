@@ -3,8 +3,8 @@ import { RectButton } from "react-native-gesture-handler";
 
 /**
  * Estilos centralizados do app (mesma organização do projeto GitViewer).
- * Todos os componentes leem as cores do tema, então trocar claro/escuro
- * é só chamar toggleTheme() no ThemeContext.
+ * Todos os componentes leem as cores do tema (theme.cores), então trocar
+ * claro/escuro é só chamar alternarTema() no ContextoTema.
  *
  * Props que servem apenas para o estilo começam com "$" e por isso não são
  * repassadas para os componentes nativos.
@@ -14,35 +14,35 @@ import { RectButton } from "react-native-gesture-handler";
  * Estrutura geral
  * ------------------------------------------------------------------ */
 
-export const Screen = styled.View`
+export const Tela = styled.View`
   flex: 1;
-  background: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.cores.fundo};
 `;
 
-export const CenteredScreen = styled.View`
+export const TelaCentralizada = styled.View`
   flex: 1;
-  background: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.cores.fundo};
   align-items: center;
   justify-content: center;
   padding: 24px;
 `;
 
-export const SectionTitle = styled.Text`
+export const TituloSecao = styled.Text`
   font-size: 16px;
   font-weight: bold;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
   margin: 24px 20px 12px;
 `;
 
-export const MutedText = styled.Text`
+export const TextoSuave = styled.Text`
   font-size: 13px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: ${({ theme }) => theme.cores.textoSuave};
 `;
 
-export const ErrorText = styled.Text`
+export const TextoDeErro = styled.Text`
   align-self: flex-start;
   font-size: 12px;
-  color: ${({ theme }) => theme.colors.danger};
+  color: ${({ theme }) => theme.cores.perigo};
   margin-top: 4px;
   margin-left: 2px;
 `;
@@ -51,57 +51,57 @@ export const ErrorText = styled.Text`
  * LOGIN e CADASTRO
  * ------------------------------------------------------------------ */
 
-export const AuthContainer = styled.View`
+export const ContainerAutenticacao = styled.View`
   flex: 1;
-  background: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.cores.fundo};
   align-items: center;
   justify-content: center;
   padding-horizontal: 28px;
 `;
 
-export const LogoMark = styled.View`
+export const LogoMarca = styled.View`
   width: 68px;
   height: 68px;
   border-radius: 34px;
   align-items: center;
   justify-content: center;
-  background: ${({ theme }) => theme.colors.header};
+  background: ${({ theme }) => theme.cores.cabecalho};
   margin-bottom: 14px;
 `;
 
-export const Brand = styled.Text`
+export const Marca = styled.Text`
   font-size: 28px;
   font-weight: bold;
   letter-spacing: 2px;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
 `;
 
-export const BrandHighlight = styled.Text`
-  color: ${({ theme }) => theme.colors.primary};
+export const MarcaDestaque = styled.Text`
+  color: ${({ theme }) => theme.cores.primaria};
 `;
 
-export const BrandSubtitle = styled.Text`
+export const MarcaSubtitulo = styled.Text`
   font-size: 13px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: ${({ theme }) => theme.cores.textoSuave};
   margin-top: 6px;
   margin-bottom: 28px;
   text-align: center;
 `;
 
-export const InputWrapper = styled.View`
+export const CaixaCampo = styled.View`
   width: 100%;
   margin-bottom: 14px;
 `;
 
-export const FieldLabel = styled.Text`
+export const RotuloCampo = styled.Text`
   font-size: 13px;
   font-weight: 600;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: ${({ theme }) => theme.cores.textoSuave};
   margin-bottom: 6px;
   margin-left: 2px;
 `;
 
-export const Input = styled.TextInput.attrs({
+export const CampoEntrada = styled.TextInput.attrs({
   placeholderTextColor: "#8A9099",
 })`
   width: 100%;
@@ -110,24 +110,24 @@ export const Input = styled.TextInput.attrs({
   padding: 0 14px;
   font-size: 15px;
   border-width: 1px;
-  border-color: ${({ theme, $invalid }) =>
-    $invalid ? theme.colors.danger : theme.colors.border};
-  background: ${({ theme }) => theme.colors.surfaceAlt};
-  color: ${({ theme }) => theme.colors.text};
+  border-color: ${({ theme, $invalido }) =>
+    $invalido ? theme.cores.perigo : theme.cores.borda};
+  background: ${({ theme }) => theme.cores.superficieAlternativa};
+  color: ${({ theme }) => theme.cores.texto};
 `;
 
-export const PrimaryButton = styled(RectButton)`
+export const BotaoPrincipal = styled(RectButton)`
   width: 100%;
   height: 50px;
   border-radius: 10px;
   align-items: center;
   justify-content: center;
-  background: ${({ theme }) => theme.colors.primary};
+  background: ${({ theme }) => theme.cores.primaria};
   margin-top: 8px;
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
 `;
 
-export const PrimaryButtonText = styled.Text`
+export const TextoBotaoPrincipal = styled.Text`
   font-size: 15px;
   font-weight: bold;
   color: #06283d;
@@ -135,7 +135,7 @@ export const PrimaryButtonText = styled.Text`
   letter-spacing: 1px;
 `;
 
-export const OutlineButton = styled(RectButton)`
+export const BotaoContorno = styled(RectButton)`
   width: 100%;
   height: 50px;
   border-radius: 10px;
@@ -143,27 +143,27 @@ export const OutlineButton = styled(RectButton)`
   justify-content: center;
   margin-top: 10px;
   border-width: 1px;
-  border-color: ${({ theme }) => theme.colors.primary};
+  border-color: ${({ theme }) => theme.cores.primaria};
 `;
 
-export const OutlineButtonText = styled.Text`
+export const TextoBotaoContorno = styled.Text`
   font-size: 15px;
   font-weight: bold;
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.cores.primaria};
   text-transform: uppercase;
   letter-spacing: 1px;
 `;
 
-export const FormScroll = styled.ScrollView.attrs({
+export const RolagemFormulario = styled.ScrollView.attrs({
   contentContainerStyle: { paddingBottom: 40 },
   keyboardShouldPersistTaps: "handled",
   showsVerticalScrollIndicator: false,
 })`
   flex: 1;
-  background: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.cores.fundo};
 `;
 
-export const FormBody = styled.View`
+export const CorpoFormulario = styled.View`
   padding-horizontal: 24px;
 `;
 
@@ -171,29 +171,29 @@ export const FormBody = styled.View`
  * Tela principal (CARDS)
  * ------------------------------------------------------------------ */
 
-export const GreetingRow = styled.View`
+export const LinhaSaudacao = styled.View`
   padding: 16px 20px 8px;
 `;
 
-export const Greeting = styled.Text`
+export const Saudacao = styled.Text`
   font-size: 20px;
   font-weight: bold;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
 `;
 
-export const GreetingHint = styled.Text`
+export const DicaSaudacao = styled.Text`
   font-size: 13px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: ${({ theme }) => theme.cores.textoSuave};
   margin-top: 2px;
 `;
 
-export const SearchRow = styled.View`
+export const LinhaBusca = styled.View`
   flex-direction: row;
   align-items: center;
   padding: 8px 20px 12px;
 `;
 
-export const SearchInput = styled.TextInput.attrs({
+export const CampoBusca = styled.TextInput.attrs({
   placeholderTextColor: "#8A9099",
 })`
   flex: 1;
@@ -202,46 +202,46 @@ export const SearchInput = styled.TextInput.attrs({
   padding: 0 14px;
   font-size: 15px;
   border-width: 1px;
-  border-color: ${({ theme }) => theme.colors.border};
-  background: ${({ theme }) => theme.colors.surfaceAlt};
-  color: ${({ theme }) => theme.colors.text};
+  border-color: ${({ theme }) => theme.cores.borda};
+  background: ${({ theme }) => theme.cores.superficieAlternativa};
+  color: ${({ theme }) => theme.cores.texto};
 `;
 
-export const AddButton = styled(RectButton)`
+export const BotaoBuscar = styled(RectButton)`
   width: 48px;
   height: 44px;
   border-radius: 10px;
   align-items: center;
   justify-content: center;
   margin-left: 8px;
-  background: ${({ theme }) => theme.colors.primary};
-  opacity: ${({ $loading }) => ($loading ? 0.7 : 1)};
+  background: ${({ theme }) => theme.cores.primaria};
+  opacity: ${({ $carregando }) => ($carregando ? 0.7 : 1)};
 `;
 
-export const SegmentRow = styled.View`
+export const LinhaAbas = styled.View`
   flex-direction: row;
   padding: 0 12px 8px;
 `;
 
-export const Segment = styled(RectButton)`
+export const Aba = styled(RectButton)`
   flex: 1;
   height: 38px;
   border-radius: 8px;
   align-items: center;
   justify-content: center;
   margin-horizontal: 4px;
-  background: ${({ theme, $active }) =>
-    $active ? theme.colors.primary : theme.colors.surfaceAlt};
+  background: ${({ theme, $ativo }) =>
+    $ativo ? theme.cores.primaria : theme.cores.superficieAlternativa};
 `;
 
-export const SegmentText = styled.Text`
+export const TextoAba = styled.Text`
   font-size: 12px;
   font-weight: bold;
-  color: ${({ theme, $active }) =>
-    $active ? "#06283d" : theme.colors.textMuted};
+  color: ${({ theme, $ativo }) =>
+    $ativo ? "#06283d" : theme.cores.textoSuave};
 `;
 
-export const List = styled.FlatList.attrs({
+export const Lista = styled.FlatList.attrs({
   showsVerticalScrollIndicator: false,
   contentContainerStyle: { paddingBottom: 120 },
 })`
@@ -251,244 +251,246 @@ export const List = styled.FlatList.attrs({
 
 /* --- Card ---------------------------------------------------------- */
 
-export const Card = styled.View`
+export const Cartao = styled.View`
   flex-direction: row;
   margin: 0 20px 14px;
   border-radius: 12px;
   padding: 10px;
   border-width: 1px;
-  border-color: ${({ theme }) => theme.colors.border};
-  background: ${({ theme }) => theme.colors.surface};
+  border-color: ${({ theme }) => theme.cores.borda};
+  background: ${({ theme }) => theme.cores.superficie};
   /* Elevação do Material Design: aplicada no tema claro e dispensada no escuro,
      seguindo a recomendação do Material (no dark theme a separação é por cor). */
-  elevation: ${({ theme }) => (theme.mode === "dark" ? 0 : 2)};
+  elevation: ${({ theme }) => (theme.modo === "dark" ? 0 : 2)};
   shadow-color: #0b1220;
-  shadow-opacity: ${({ theme }) => (theme.mode === "dark" ? 0 : 0.12)};
+  shadow-opacity: ${({ theme }) => (theme.modo === "dark" ? 0 : 0.12)};
   shadow-radius: 8px;
   shadow-offset: 0px 2px;
 `;
 
-export const CardPoster = styled.Image`
+export const PosterCartao = styled.Image`
   width: 84px;
   height: 126px;
   border-radius: 8px;
-  background: ${({ theme }) => theme.colors.surfaceAlt};
+  background: ${({ theme }) => theme.cores.superficieAlternativa};
 `;
 
-export const PosterFallback = styled.View`
+export const PosterAlternativo = styled.View`
   width: 84px;
   height: 126px;
   border-radius: 8px;
   align-items: center;
   justify-content: center;
-  background: ${({ theme }) => theme.colors.surfaceAlt};
+  background: ${({ theme }) => theme.cores.superficieAlternativa};
 `;
 
-export const CardInfo = styled.View`
+export const InformacoesCartao = styled.View`
   flex: 1;
   margin-left: 12px;
 `;
 
-export const TitleRow = styled.View`
+export const LinhaTitulo = styled.View`
   flex-direction: row;
   align-items: flex-start;
   justify-content: space-between;
 `;
 
-export const CardTitle = styled.Text.attrs({ numberOfLines: 2 })`
+export const TituloCartao = styled.Text.attrs({ numberOfLines: 2 })`
   flex: 1;
   margin-right: 8px;
   font-size: 15px;
   font-weight: bold;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
 `;
 
-export const CardMeta = styled.Text.attrs({ numberOfLines: 1 })`
+export const ResumoCartao = styled.Text.attrs({ numberOfLines: 1 })`
   font-size: 12px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: ${({ theme }) => theme.cores.textoSuave};
   margin-top: 3px;
 `;
 
-export const StatusTag = styled.View`
+export const EtiquetaStatus = styled.View`
   align-self: flex-start;
   flex-direction: row;
   align-items: center;
   border-radius: 20px;
   padding: 3px 9px;
   margin-top: 6px;
-  background: ${({ theme }) => theme.colors.surfaceAlt};
+  background: ${({ theme }) => theme.cores.superficieAlternativa};
 `;
 
-export const StatusDot = styled.View`
+export const PontoStatus = styled.View`
   width: 7px;
   height: 7px;
   border-radius: 4px;
   margin-right: 6px;
-  background: ${({ theme }) => theme.colors.accent};
+  background: ${({ theme }) => theme.cores.destaque};
 `;
 
-export const StatusText = styled.Text`
+export const TextoStatus = styled.Text`
   font-size: 11px;
   font-weight: 600;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
 `;
 
-export const RatingBadge = styled.View`
+export const SeloNota = styled.View`
   width: 40px;
   height: 40px;
   border-radius: 20px;
   align-items: center;
   justify-content: center;
   border-width: 2px;
-  border-color: ${({ theme, $score }) =>
-    $score >= 7
-      ? theme.colors.ratingGood
-      : $score >= 5
-        ? theme.colors.ratingMid
-        : theme.colors.ratingBad};
-  background: ${({ theme }) => theme.colors.background};
+  border-color: ${({ theme, $nota }) =>
+    $nota >= 7
+      ? theme.cores.notaBoa
+      : $nota >= 5
+        ? theme.cores.notaMedia
+        : theme.cores.notaRuim};
+  background: ${({ theme }) => theme.cores.fundo};
 `;
 
-export const RatingText = styled.Text`
+export const TextoNota = styled.Text`
   font-size: 12px;
   font-weight: bold;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
 `;
 
-export const CardActions = styled.View`
+export const AcoesCartao = styled.View`
   flex-direction: row;
   margin-top: 8px;
 `;
 
-export const SmallButton = styled(RectButton)`
+export const BotaoPequeno = styled(RectButton)`
   flex: 1;
   height: 34px;
   border-radius: 8px;
   align-items: center;
   justify-content: center;
   margin-right: 8px;
-  background: ${({ theme, $variant }) =>
-    $variant === "danger"
-      ? theme.colors.danger
-      : $variant === "done"
-        ? theme.colors.surfaceAlt
-        : theme.colors.primary};
+  background: ${({ theme, $variante }) =>
+    $variante === "perigo"
+      ? theme.cores.perigo
+      : $variante === "concluido"
+        ? theme.cores.superficieAlternativa
+        : theme.cores.primaria};
 `;
 
-export const SmallButtonText = styled.Text`
+/* numberOfLines: 1 evita que rótulos longos ("VER DETALHES") quebrem em duas
+   linhas dentro do botão, que tem altura fixa de 34px. */
+export const TextoBotaoPequeno = styled.Text.attrs({ numberOfLines: 1 })`
   font-size: 11px;
   font-weight: bold;
-  color: ${({ theme, $variant }) =>
-    $variant === "danger"
+  color: ${({ theme, $variante }) =>
+    $variante === "perigo"
       ? "#FFFFFF"
-      : $variant === "done"
-        ? theme.colors.textMuted
+      : $variante === "concluido"
+        ? theme.cores.textoSuave
         : "#06283d"};
   text-transform: uppercase;
 `;
 
-export const CategoryHint = styled.Text`
+export const DicaCategoria = styled.Text`
   font-size: 11px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: ${({ theme }) => theme.cores.textoSuave};
   margin-top: 2px;
 `;
 
 /* --- Estados vazios / carregando ----------------------------------- */
 
-export const EmptyState = styled.View`
+export const EstadoVazio = styled.View`
   align-items: center;
   justify-content: center;
   padding: 48px 32px;
 `;
 
-export const EmptyTitle = styled.Text`
+export const TituloVazio = styled.Text`
   font-size: 16px;
   font-weight: bold;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
   margin-top: 12px;
   text-align: center;
 `;
 
-export const EmptyText = styled.Text`
+export const TextoVazio = styled.Text`
   font-size: 13px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: ${({ theme }) => theme.cores.textoSuave};
   margin-top: 6px;
   text-align: center;
   line-height: 19px;
 `;
 
-export const LoadingBox = styled.View`
+export const CaixaCarregando = styled.View`
   padding: 40px;
   align-items: center;
 `;
 
 /* --- Avisos e cabeçalho de resultados ------------------------------ */
 
-export const WarningBox = styled.View`
+export const CaixaAviso = styled.View`
   flex-direction: row;
   align-items: flex-start;
   margin: 4px 20px 12px;
   padding: 12px;
   border-radius: 10px;
   border-width: 1px;
-  border-color: ${({ theme }) => theme.colors.danger};
-  background: ${({ theme }) => theme.colors.surfaceAlt};
+  border-color: ${({ theme }) => theme.cores.perigo};
+  background: ${({ theme }) => theme.cores.superficieAlternativa};
 `;
 
-export const WarningText = styled.Text`
+export const TextoAviso = styled.Text`
   flex: 1;
   margin-left: 8px;
   font-size: 12px;
   line-height: 18px;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
 `;
 
-export const ResultsHeader = styled.View`
+export const CabecalhoResultados = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   padding: 0 20px 10px;
 `;
 
-export const ClearButton = styled(RectButton)`
+export const BotaoLimpar = styled(RectButton)`
   flex-direction: row;
   align-items: center;
   padding: 5px 9px;
   border-radius: 8px;
-  background: ${({ theme }) => theme.colors.surfaceAlt};
+  background: ${({ theme }) => theme.cores.superficieAlternativa};
 `;
 
-export const ClearButtonText = styled.Text`
+export const TextoBotaoLimpar = styled.Text`
   font-size: 11px;
   font-weight: bold;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: ${({ theme }) => theme.cores.textoSuave};
   margin-left: 4px;
   text-transform: uppercase;
 `;
 
-export const FooterLoading = styled.View`
+export const RodapeCarregando = styled.View`
   padding: 16px;
   align-items: center;
 `;
 
-export const FeedbackBox = styled.View`
+export const CaixaMensagem = styled.View`
   margin: 0 20px 10px;
   padding: 10px 12px;
   border-radius: 10px;
   border-width: 1px;
-  border-color: ${({ theme }) => theme.colors.accent};
-  background: ${({ theme }) => theme.colors.surfaceAlt};
+  border-color: ${({ theme }) => theme.cores.destaque};
+  background: ${({ theme }) => theme.cores.superficieAlternativa};
 `;
 
-export const FeedbackText = styled.Text`
+export const TextoMensagem = styled.Text`
   font-size: 12px;
   font-weight: 600;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
 `;
 
 /* --- Roleta -------------------------------------------------------- */
 
-export const DiceButton = styled(RectButton)`
+export const BotaoRoleta = styled(RectButton)`
   position: absolute;
   right: 20px;
   bottom: 24px;
@@ -498,10 +500,10 @@ export const DiceButton = styled(RectButton)`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  background: ${({ theme }) => theme.colors.primary};
+  background: ${({ theme }) => theme.cores.primaria};
 `;
 
-export const DiceButtonText = styled.Text`
+export const TextoBotaoRoleta = styled.Text`
   font-size: 13px;
   font-weight: bold;
   color: #06283d;
@@ -509,7 +511,7 @@ export const DiceButtonText = styled.Text`
   text-transform: uppercase;
 `;
 
-export const ModalOverlay = styled.Pressable`
+export const FundoModal = styled.Pressable`
   flex: 1;
   align-items: center;
   justify-content: center;
@@ -517,24 +519,24 @@ export const ModalOverlay = styled.Pressable`
   background: rgba(0, 0, 0, 0.75);
 `;
 
-export const ModalCard = styled.Pressable`
+export const QuadroModal = styled.Pressable`
   width: 100%;
   border-radius: 16px;
   padding: 22px;
   align-items: center;
-  background: ${({ theme }) => theme.colors.surface};
+  background: ${({ theme }) => theme.cores.superficie};
 `;
 
-export const ModalTitle = styled.Text`
+export const TituloModal = styled.Text`
   font-size: 17px;
   font-weight: bold;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
   margin-bottom: 4px;
 `;
 
-export const ModalText = styled.Text`
+export const TextoModal = styled.Text`
   font-size: 14px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: ${({ theme }) => theme.cores.textoSuave};
   text-align: center;
   margin-top: 4px;
 `;
@@ -543,67 +545,67 @@ export const ModalText = styled.Text`
  * Tela de DETALHES
  * ------------------------------------------------------------------ */
 
-export const DetailScroll = styled.ScrollView.attrs({
+export const RolagemDetalhes = styled.ScrollView.attrs({
   showsVerticalScrollIndicator: false,
   contentContainerStyle: { paddingBottom: 60 },
 })`
   flex: 1;
-  background: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.cores.fundo};
 `;
 
-export const BackdropWrapper = styled.View`
+export const CaixaBanner = styled.View`
   height: 210px;
-  background: ${({ theme }) => theme.colors.surfaceAlt};
+  background: ${({ theme }) => theme.cores.superficieAlternativa};
 `;
 
-export const BackdropImage = styled.Image`
+export const ImagemBanner = styled.Image`
   width: 100%;
   height: 100%;
 `;
 
-export const DetailBody = styled.View`
+export const CorpoDetalhes = styled.View`
   padding: 0 20px;
 `;
 
-export const DetailTop = styled.View`
+export const TopoDetalhes = styled.View`
   flex-direction: row;
   margin-top: -70px;
 `;
 
-export const DetailPoster = styled.Image`
+export const PosterDetalhes = styled.Image`
   width: 110px;
   height: 165px;
   border-radius: 10px;
-  background: ${({ theme }) => theme.colors.surfaceAlt};
+  background: ${({ theme }) => theme.cores.superficieAlternativa};
 `;
 
-export const DetailTopInfo = styled.View`
+export const InfoTopoDetalhes = styled.View`
   flex: 1;
   margin-left: 14px;
   margin-top: 78px;
 `;
 
-export const DetailTitle = styled.Text`
+export const TituloDetalhes = styled.Text`
   font-size: 19px;
   font-weight: bold;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
 `;
 
-export const DetailMeta = styled.Text`
+export const ResumoDetalhes = styled.Text`
   font-size: 13px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: ${({ theme }) => theme.cores.textoSuave};
   margin-top: 4px;
 `;
 
-export const TypeTag = styled.View`
+export const EtiquetaTipo = styled.View`
   align-self: flex-start;
   border-radius: 6px;
   padding: 3px 8px;
   margin-bottom: 6px;
-  background: ${({ theme }) => theme.colors.primary};
+  background: ${({ theme }) => theme.cores.primaria};
 `;
 
-export const TypeTagText = styled.Text`
+export const TextoEtiquetaTipo = styled.Text`
   font-size: 10px;
   font-weight: bold;
   color: #06283d;
@@ -611,64 +613,64 @@ export const TypeTagText = styled.Text`
   letter-spacing: 1px;
 `;
 
-export const ChipRow = styled.View`
+export const LinhaEtiquetas = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
   margin-top: 14px;
 `;
 
-export const Chip = styled.View`
+export const Etiqueta = styled.View`
   border-radius: 20px;
   padding: 6px 12px;
   margin-right: 8px;
   margin-bottom: 8px;
-  background: ${({ theme }) => theme.colors.surfaceAlt};
+  background: ${({ theme }) => theme.cores.superficieAlternativa};
 `;
 
-export const ChipText = styled.Text`
+export const TextoEtiqueta = styled.Text`
   font-size: 12px;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
 `;
 
-export const Overview = styled.Text`
+export const Sinopse = styled.Text`
   font-size: 14px;
   line-height: 21px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: ${({ theme }) => theme.cores.textoSuave};
   margin-top: 10px;
 `;
 
-export const InfoGrid = styled.View`
+export const GradeInformacoes = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
   margin-top: 14px;
 `;
 
-export const InfoBox = styled.View`
+export const CaixaInformacao = styled.View`
   width: 50%;
   margin-bottom: 14px;
 `;
 
-export const InfoLabel = styled.Text`
+export const RotuloInformacao = styled.Text`
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: ${({ theme }) => theme.cores.textoSuave};
 `;
 
-export const InfoValue = styled.Text`
+export const ValorInformacao = styled.Text`
   font-size: 14px;
   font-weight: 600;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
   margin-top: 3px;
 `;
 
-export const ActionRow = styled.View`
+export const LinhaAcoes = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
   margin-top: 18px;
 `;
 
-export const PillButton = styled(RectButton)`
+export const BotaoPilula = styled(RectButton)`
   height: 42px;
   border-radius: 10px;
   padding-horizontal: 16px;
@@ -677,111 +679,111 @@ export const PillButton = styled(RectButton)`
   justify-content: center;
   margin-right: 10px;
   margin-bottom: 10px;
-  background: ${({ theme, $active, $variant }) =>
-    $variant === "danger"
-      ? theme.colors.danger
-      : $active
-        ? theme.colors.primary
-        : theme.colors.surfaceAlt};
+  background: ${({ theme, $ativo, $variante }) =>
+    $variante === "perigo"
+      ? theme.cores.perigo
+      : $ativo
+        ? theme.cores.primaria
+        : theme.cores.superficieAlternativa};
 `;
 
-export const PillButtonText = styled.Text`
+export const TextoBotaoPilula = styled.Text`
   font-size: 12px;
   font-weight: bold;
-  color: ${({ theme, $active, $variant }) =>
-    $variant === "danger"
+  color: ${({ theme, $ativo, $variante }) =>
+    $variante === "perigo"
       ? "#FFFFFF"
-      : $active
+      : $ativo
         ? "#06283d"
-        : theme.colors.text};
+        : theme.cores.texto};
   margin-left: 6px;
 `;
 
 /* --- Avaliação com estrelas ---------------------------------------- */
 
-export const StarsRow = styled.View`
+export const LinhaEstrelas = styled.View`
   flex-direction: row;
   margin-top: 8px;
 `;
 
-export const StarButton = styled(RectButton)`
+export const BotaoEstrela = styled(RectButton)`
   padding: 4px;
   margin-right: 2px;
 `;
 
 /* --- Elenco -------------------------------------------------------- */
 
-export const BlockTitle = styled.Text`
+export const TituloBloco = styled.Text`
   font-size: 16px;
   font-weight: bold;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
   margin-top: 24px;
   margin-bottom: 10px;
 `;
 
-export const CastList = styled.FlatList.attrs({
+export const ListaElenco = styled.FlatList.attrs({
   horizontal: true,
   showsHorizontalScrollIndicator: false,
   contentContainerStyle: { paddingRight: 20, paddingBottom: 6 },
 })``;
 
-export const SimilarList = styled.FlatList.attrs({
+export const ListaSimilares = styled.FlatList.attrs({
   horizontal: true,
   showsHorizontalScrollIndicator: false,
   contentContainerStyle: { paddingRight: 20, paddingBottom: 6 },
 })``;
 
-export const CastCard = styled.View`
+export const CardAtor = styled.View`
   width: 84px;
   margin-right: 12px;
   align-items: center;
 `;
 
-export const CastAvatar = styled.Image`
+export const FotoAtor = styled.Image`
   width: 68px;
   height: 68px;
   border-radius: 34px;
-  background: ${({ theme }) => theme.colors.surfaceAlt};
+  background: ${({ theme }) => theme.cores.superficieAlternativa};
 `;
 
-export const CastName = styled.Text.attrs({ numberOfLines: 2 })`
+export const NomeAtor = styled.Text.attrs({ numberOfLines: 2 })`
   font-size: 11px;
   font-weight: 600;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
   text-align: center;
   margin-top: 6px;
 `;
 
-export const CastRole = styled.Text.attrs({ numberOfLines: 2 })`
+export const PapelAtor = styled.Text.attrs({ numberOfLines: 2 })`
   font-size: 10px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: ${({ theme }) => theme.cores.textoSuave};
   text-align: center;
   margin-top: 2px;
 `;
 
 /* --- Similares ----------------------------------------------------- */
 
-export const SimilarCard = styled(RectButton)`
+export const CardSimilar = styled(RectButton)`
   width: 116px;
   margin-right: 12px;
 `;
 
-export const SimilarPoster = styled.Image`
+export const PosterSimilar = styled.Image`
   width: 116px;
   height: 174px;
   border-radius: 10px;
-  background: ${({ theme }) => theme.colors.surfaceAlt};
+  background: ${({ theme }) => theme.cores.superficieAlternativa};
 `;
 
-export const SimilarName = styled.Text.attrs({ numberOfLines: 2 })`
+export const NomeSimilar = styled.Text.attrs({ numberOfLines: 2 })`
   font-size: 12px;
   font-weight: 600;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.cores.texto};
   margin-top: 6px;
 `;
 
-export const SimilarYear = styled.Text`
+export const AnoSimilar = styled.Text`
   font-size: 11px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: ${({ theme }) => theme.cores.textoSuave};
   margin-top: 2px;
 `;

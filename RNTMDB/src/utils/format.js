@@ -1,28 +1,32 @@
-import { IMAGE_SIZES, TMDB_IMAGE_BASE_URL } from "../config/tmdb";
+import { TAMANHOS_IMAGEM, TMDB_URL_BASE_IMAGENS } from "../config/tmdb";
 
 /* ------------------------------------------------------------------ *
  * Imagens
  * ------------------------------------------------------------------ */
 
 /** Monta a URL completa de uma imagem a partir do caminho devolvido pela API. */
-export const imageUrl = (path, size) =>
-  path ? `${TMDB_IMAGE_BASE_URL}/${size}${path}` : null;
+export const urlImagem = (caminho, tamanho) =>
+  caminho ? `${TMDB_URL_BASE_IMAGENS}/${tamanho}${caminho}` : null;
 
-export const posterUrl = (path) => imageUrl(path, IMAGE_SIZES.poster);
-export const backdropUrl = (path) => imageUrl(path, IMAGE_SIZES.backdrop);
-export const profileUrl = (path) => imageUrl(path, IMAGE_SIZES.profile);
+export const urlPoster = (caminho) => urlImagem(caminho, TAMANHOS_IMAGEM.poster);
+export const urlBanner = (caminho) => urlImagem(caminho, TAMANHOS_IMAGEM.backdrop);
+export const urlPerfil = (caminho) => urlImagem(caminho, TAMANHOS_IMAGEM.profile);
 
 /* ------------------------------------------------------------------ *
  * Categorias da biblioteca do usuário
  * ------------------------------------------------------------------ */
 
-export const CATEGORIES = {
+/**
+ * Rótulos exibidos na tela. As chaves (watchlist, watched, favorite) são as
+ * mesmas gravadas no aparelho, por isso não mudam.
+ */
+export const CATEGORIAS = {
   watchlist: "Quero assistir",
   watched: "Assistidos",
   favorite: "Favoritos",
 };
 
-export const CATEGORY_KEYS = Object.keys(CATEGORIES);
+export const CHAVES_CATEGORIAS = Object.keys(CATEGORIAS);
 
 /* ------------------------------------------------------------------ *
  * Textos
@@ -31,8 +35,9 @@ export const CATEGORY_KEYS = Object.keys(CATEGORIES);
 /**
  * O TMDb devolve o campo "status" em inglês em algumas respostas.
  * Mantemos um dicionário para exibir o requisito "status" do card em português.
+ * As chaves são os valores exatos que a API devolve, por isso ficam em inglês.
  */
-const STATUS_LABELS = {
+const ROTULOS_STATUS = {
   Released: "Lançado",
   "Post Production": "Em pós-produção",
   "In Production": "Em produção",
@@ -44,53 +49,55 @@ const STATUS_LABELS = {
   Pilot: "Piloto",
 };
 
-export const translateStatus = (status) =>
-  STATUS_LABELS[status] || status || "Status desconhecido";
+export const traduzirStatus = (status) =>
+  ROTULOS_STATUS[status] || status || "Status desconhecido";
 
 /** 135 -> "2h 15min" | 45 -> "45min" */
-export const formatRuntime = (minutes) => {
-  if (!minutes) return null;
-  const hours = Math.floor(minutes / 60);
-  const rest = minutes % 60;
-  if (!hours) return `${rest}min`;
-  return rest ? `${hours}h ${rest}min` : `${hours}h`;
+export const formatarDuracao = (minutos) => {
+  if (!minutos) return null;
+  const horas = Math.floor(minutos / 60);
+  const restante = minutos % 60;
+  if (!horas) return `${restante}min`;
+  return restante ? `${horas}h ${restante}min` : `${horas}h`;
 };
 
 /** "2024-05-01" -> "01/05/2024" */
-export const formatDate = (date) => {
-  if (!date) return null;
-  const [year, month, day] = date.split("-");
-  return `${day}/${month}/${year}`;
+export const formatarData = (data) => {
+  if (!data) return null;
+  const [ano, mes, dia] = data.split("-");
+  return `${dia}/${mes}/${ano}`;
 };
 
 /** "2024-05-01" -> "2024" */
-export const formatYear = (date) => (date ? date.slice(0, 4) : "—");
+export const formatarAno = (data) => (data ? data.slice(0, 4) : "—");
 
 /** 7.532 -> "7,5" (padrão brasileiro) */
-export const formatVote = (vote) =>
-  typeof vote === "number" && vote > 0 ? vote.toFixed(1).replace(".", ",") : "—";
+export const formatarNota = (nota) =>
+  typeof nota === "number" && nota > 0
+    ? nota.toFixed(1).replace(".", ",")
+    : "—";
 
 /** 1500000 -> "1.500.000" (sem depender do Intl, que varia entre plataformas) */
-export const formatNumber = (value) =>
-  typeof value === "number" && value > 0
-    ? String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+export const formatarNumero = (valor) =>
+  typeof valor === "number" && valor > 0
+    ? String(valor).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
     : null;
 
-export const formatMoney = (value) => {
-  const formatted = formatNumber(value);
-  return formatted ? `US$ ${formatted}` : null;
+export const formatarDinheiro = (valor) => {
+  const formatado = formatarNumero(valor);
+  return formatado ? `US$ ${formatado}` : null;
 };
 
 /** 3 -> "3 temporadas" | 1 -> "1 temporada" */
-export const pluralizeSeasons = (total) =>
+export const pluralizarTemporadas = (total) =>
   `${total} ${total === 1 ? "temporada" : "temporadas"}`;
 
-export const pluralizeEpisodes = (total) =>
+export const pluralizarEpisodios = (total) =>
   `${total} ${total === 1 ? "episódio" : "episódios"}`;
 
 /** Junta os nomes dos gêneros em uma linha: "Ação • Drama" */
-export const joinGenres = (genres = []) =>
-  genres.map((genre) => genre.name).join(" • ");
+export const juntarGeneros = (generos = []) =>
+  generos.map((genero) => genero.name).join(" • ");
 
 /* ------------------------------------------------------------------ *
  * Normalização das respostas do TMDb
@@ -98,12 +105,14 @@ export const joinGenres = (genres = []) =>
 
 /**
  * Converte um item de busca/trending no formato interno do app.
+ * Os nomes dos campos (posterPath, voteAverage...) seguem os da API do TMDb,
+ * o que facilita comparar o código com a documentação.
  * Esses endpoints não trazem "status" nem "gêneros", por isso o card só
  * fica completo depois de buscar os detalhes ao adicionar.
  */
-export const normalizeSearchResult = (item) => {
+export const normalizarResultadoBusca = (item) => {
   const mediaType = item.media_type || item.mediaType || "movie";
-  const date = item.release_date || item.first_air_date;
+  const data = item.release_date || item.first_air_date;
 
   return {
     id: item.id,
@@ -112,8 +121,8 @@ export const normalizeSearchResult = (item) => {
     overview: item.overview || "",
     posterPath: item.poster_path,
     backdropPath: item.backdrop_path,
-    releaseDate: date,
-    year: formatYear(date),
+    releaseDate: data,
+    year: formatarAno(data),
     voteAverage: item.vote_average || 0,
     voteCount: item.vote_count || 0,
     status: null,
@@ -129,38 +138,51 @@ export const normalizeSearchResult = (item) => {
 };
 
 /** Converte a resposta de /movie/{id} ou /tv/{id} no formato interno. */
-export const normalizeDetails = (mediaType, data) => ({
-  id: data.id,
+export const normalizarDetalhes = (mediaType, dados) => ({
+  id: dados.id,
   mediaType,
-  title: data.title || data.name || "Sem título",
-  overview: data.overview || "",
-  posterPath: data.poster_path,
-  backdropPath: data.backdrop_path,
-  releaseDate: data.release_date || data.first_air_date,
-  year: formatYear(data.release_date || data.first_air_date),
-  voteAverage: data.vote_average || 0,
-  voteCount: data.vote_count || 0,
-  status: data.status || null,
-  statusLabel: translateStatus(data.status),
-  genres: data.genres || [],
-  runtime: data.runtime || null,
-  seasons: data.number_of_seasons || null,
-  episodes: data.number_of_episodes || null,
-  budget: data.budget || 0,
-  revenue: data.revenue || 0,
+  title: dados.title || dados.name || "Sem título",
+  overview: dados.overview || "",
+  posterPath: dados.poster_path,
+  backdropPath: dados.backdrop_path,
+  releaseDate: dados.release_date || dados.first_air_date,
+  year: formatarAno(dados.release_date || dados.first_air_date),
+  voteAverage: dados.vote_average || 0,
+  voteCount: dados.vote_count || 0,
+  status: dados.status || null,
+  statusLabel: traduzirStatus(dados.status),
+  genres: dados.genres || [],
+  runtime: dados.runtime || null,
+  seasons: dados.number_of_seasons || null,
+  episodes: dados.number_of_episodes || null,
+  budget: dados.budget || 0,
+  revenue: dados.revenue || 0,
 });
 
 /** Chave única de um título, usada como key do FlatList e como id no AsyncStorage. */
-export const cardKey = (item) => `${item.mediaType}-${item.id}`;
+export const chaveDoCartao = (item) => `${item.mediaType}-${item.id}`;
+
+/**
+ * Junta duas listas de cards descartando os títulos repetidos.
+ *
+ * É necessário porque a paginação do TMDb não garante páginas sem repetição:
+ * o /trending/all/week, por exemplo, devolve o mesmo filme na página 1 e na 2.
+ * Como a chave do FlatList é o "mediaType-id", repetir um título geraria a
+ * chave duplicada e o React reclamaria do card duplicado na lista.
+ */
+export const juntarSemRepetir = (atuais = [], novos = []) => {
+  const jaNaLista = new Set(atuais.map(chaveDoCartao));
+  return [...atuais, ...novos.filter((item) => !jaNaLista.has(chaveDoCartao(item)))];
+};
 
 /** Linha de destaque do card: "2024 • 2h 15min" / "2021 • 3 temporadas". */
-export const buildSubtitle = (item) => {
-  const parts = [];
-  if (item.year && item.year !== "—") parts.push(item.year);
+export const montarSubtitulo = (item) => {
+  const partes = [];
+  if (item.year && item.year !== "—") partes.push(item.year);
   if (item.mediaType === "tv" && item.seasons)
-    parts.push(pluralizeSeasons(item.seasons));
-  else if (item.runtime) parts.push(formatRuntime(item.runtime));
-  else if (item.mediaType === "tv") parts.push("Série");
-  else parts.push("Filme");
-  return parts.join(" • ");
+    partes.push(pluralizarTemporadas(item.seasons));
+  else if (item.runtime) partes.push(formatarDuracao(item.runtime));
+  else if (item.mediaType === "tv") partes.push("Série");
+  else partes.push("Filme");
+  return partes.join(" • ");
 };

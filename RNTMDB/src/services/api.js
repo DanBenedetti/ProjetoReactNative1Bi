@@ -1,10 +1,10 @@
 import axios from "axios";
 
 import {
-  TMDB_API_KEY,
-  TMDB_BASE_URL,
-  TMDB_LANGUAGE,
-  hasApiKey,
+  TMDB_CHAVE_API,
+  TMDB_IDIOMA,
+  TMDB_URL_BASE,
+  temChaveApi,
 } from "../config/tmdb";
 
 /**
@@ -13,56 +13,56 @@ import {
  * a api_key e o idioma pt-BR.
  */
 const api = axios.create({
-  baseURL: TMDB_BASE_URL,
+  baseURL: TMDB_URL_BASE,
   timeout: 20000,
 });
 
-api.interceptors.request.use((config) => {
-  config.params = {
-    api_key: TMDB_API_KEY,
-    language: TMDB_LANGUAGE,
-    ...config.params,
+api.interceptors.request.use((configuracao) => {
+  configuracao.params = {
+    api_key: TMDB_CHAVE_API,
+    language: TMDB_IDIOMA,
+    ...configuracao.params,
   };
-  return config;
+  return configuracao;
 });
 
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  (resposta) => resposta,
+  (erro) => {
     // Converte os erros do axios em mensagens que fazem sentido para o usuário.
-    let message = "Não foi possível falar com o TMDB. Verifique sua internet.";
+    let mensagem = "Não foi possível falar com o TMDB. Verifique sua internet.";
 
-    if (!hasApiKey()) {
-      message =
+    if (!temChaveApi()) {
+      mensagem =
         "API Key não configurada. Abra o arquivo .env, cole a sua chave do TMDB e reinicie o app.";
-    } else if (error.response?.status === 401) {
-      message = "API Key inválida ou expirada. Confira a chave no arquivo .env.";
-    } else if (error.response?.status === 404) {
-      message = "Conteúdo não encontrado no TMDB.";
-    } else if (error.code === "ECONNABORTED") {
-      message = "O TMDB demorou demais para responder. Tente novamente.";
+    } else if (erro.response?.status === 401) {
+      mensagem = "API Key inválida ou expirada. Confira a chave no arquivo .env.";
+    } else if (erro.response?.status === 404) {
+      mensagem = "Conteúdo não encontrado no TMDB.";
+    } else if (erro.code === "ECONNABORTED") {
+      mensagem = "O TMDB demorou demais para responder. Tente novamente.";
     }
 
-    error.friendlyMessage = message;
-    return Promise.reject(error);
+    erro.friendlyMessage = mensagem;
+    return Promise.reject(erro);
   },
 );
 
 /** Destaques da semana (filmes e séries) usados no feed inicial. */
-export const getTrending = (page = 1) =>
-  api.get("/trending/all/week", { params: { page } });
+export const buscarDestaques = (pagina = 1) =>
+  api.get("/trending/all/week", { params: { page: pagina } });
 
 /** Busca por filmes e séries ao mesmo tempo. */
-export const searchTitles = (query, page = 1) =>
+export const buscarTitulos = (termo, pagina = 1) =>
   api.get("/search/multi", {
-    params: { query, page, include_adult: false },
+    params: { query: termo, page: pagina, include_adult: false },
   });
 
 /**
  * Detalhes completos de um filme/série. "append_to_response" evita três
  * requisições separadas trazendo elenco, vídeos e títulos similares de uma vez.
  */
-export const getDetails = (mediaType, id) =>
+export const buscarDetalhes = (mediaType, id) =>
   api.get(`/${mediaType}/${id}`, {
     params: { append_to_response: "credits,videos,similar" },
   });

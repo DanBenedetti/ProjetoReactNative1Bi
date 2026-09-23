@@ -2,106 +2,113 @@ import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import {
-  Card,
-  CardActions,
-  CardInfo,
-  CardMeta,
-  CardPoster,
-  CardTitle,
-  CategoryHint,
-  PosterFallback,
-  RatingBadge,
-  RatingText,
-  SmallButton,
-  SmallButtonText,
-  StatusDot,
-  StatusTag,
-  StatusText,
-  TitleRow,
+  AcoesCartao,
+  BotaoPequeno,
+  Cartao,
+  DicaCategoria,
+  EtiquetaStatus,
+  InformacoesCartao,
+  LinhaTitulo,
+  PontoStatus,
+  PosterAlternativo,
+  PosterCartao,
+  ResumoCartao,
+  SeloNota,
+  TextoBotaoPequeno,
+  TextoNota,
+  TextoStatus,
+  TituloCartao,
 } from "../styles";
-import { CATEGORIES, buildSubtitle, formatVote, posterUrl } from "../utils/format";
-import { useTheme } from "../contexts/ThemeContext";
+import {
+  CATEGORIAS,
+  formatarNota,
+  montarSubtitulo,
+  urlPoster,
+} from "../utils/format";
+import { useTema } from "../contexts/ThemeContext";
 
 /**
  * Card de filme/série.
  *
  * O mesmo componente atende dois cenários, apenas com props diferentes:
- *  - Biblioteca:  onPressDetails + onRemove  (botões VER MAIS DETALHES e EXCLUIR)
- *  - API:         onAdd                     (botão ADD dos resultados de busca)
+ *  - Biblioteca:  aoVerDetalhes + aoRemover  (botões VER DETALHES e EXCLUIR)
+ *  - API:         aoAdicionar                (botão ADD dos resultados de busca)
  */
-const MovieCard = ({
+const CardDeFilme = ({
   item,
-  onPressDetails,
-  onRemove,
-  onAdd,
-  added = false,
-  loading = false,
+  aoVerDetalhes,
+  aoRemover,
+  aoAdicionar,
+  jaAdicionado = false,
+  carregando = false,
 }) => {
-  const { colors } = useTheme();
-  const poster = posterUrl(item.posterPath);
+  const { cores } = useTema();
+  const poster = urlPoster(item.posterPath);
 
   // Os resultados de busca/trending não trazem "status"; nesse caso mostramos
   // o tipo do conteúdo para o card nunca ficar sem essa informação.
-  const statusLabel =
+  const rotuloStatus =
     item.statusLabel || (item.mediaType === "tv" ? "Série" : "Filme");
 
   return (
-    <Card>
+    <Cartao>
       {poster ? (
-        <CardPoster source={{ uri: poster }} />
+        <PosterCartao source={{ uri: poster }} />
       ) : (
-        <PosterFallback>
-          <MaterialIcons name="movie" size={28} color={colors.textMuted} />
-        </PosterFallback>
+        <PosterAlternativo>
+          <MaterialIcons name="movie" size={28} color={cores.textoSuave} />
+        </PosterAlternativo>
       )}
 
-      <CardInfo>
-        <TitleRow>
-          <CardTitle>{item.title}</CardTitle>
-          <RatingBadge $score={item.voteAverage}>
-            <RatingText>{formatVote(item.voteAverage)}</RatingText>
-          </RatingBadge>
-        </TitleRow>
+      <InformacoesCartao>
+        <LinhaTitulo>
+          <TituloCartao>{item.title}</TituloCartao>
+          <SeloNota $nota={item.voteAverage}>
+            <TextoNota>{formatarNota(item.voteAverage)}</TextoNota>
+          </SeloNota>
+        </LinhaTitulo>
 
-        <CardMeta>{buildSubtitle(item)}</CardMeta>
+        <ResumoCartao>{montarSubtitulo(item)}</ResumoCartao>
 
-        <StatusTag>
-          <StatusDot />
-          <StatusText>{statusLabel}</StatusText>
-        </StatusTag>
+        <EtiquetaStatus>
+          <PontoStatus />
+          <TextoStatus>{rotuloStatus}</TextoStatus>
+        </EtiquetaStatus>
 
         {item.category ? (
-          <CategoryHint>{CATEGORIES[item.category]}</CategoryHint>
+          <DicaCategoria>{CATEGORIAS[item.category]}</DicaCategoria>
         ) : null}
 
-        <CardActions>
-          {onPressDetails ? (
-            <SmallButton onPress={onPressDetails}>
-              <SmallButtonText>Ver mais detalhes</SmallButtonText>
-            </SmallButton>
+        <AcoesCartao>
+          {aoVerDetalhes ? (
+            <BotaoPequeno onPress={aoVerDetalhes}>
+              <TextoBotaoPequeno>Ver detalhes</TextoBotaoPequeno>
+            </BotaoPequeno>
           ) : null}
 
-          {onAdd && !added ? (
-            <SmallButton onPress={onAdd} disabled={loading}>
-              <SmallButtonText>{loading ? "..." : "ADD"}</SmallButtonText>
-            </SmallButton>
+          {aoAdicionar && !jaAdicionado ? (
+            <BotaoPequeno onPress={aoAdicionar} disabled={carregando}>
+              <TextoBotaoPequeno>{carregando ? "..." : "ADD"}</TextoBotaoPequeno>
+            </BotaoPequeno>
           ) : null}
 
-          {onAdd && added ? (
-            <SmallButton $variant="done" disabled>
-              <SmallButtonText $variant="done">Na lista</SmallButtonText>
-            </SmallButton>
+          {aoAdicionar && jaAdicionado ? (
+            <BotaoPequeno $variante="concluido" disabled>
+              <TextoBotaoPequeno $variante="concluido">
+                Na lista
+              </TextoBotaoPequeno>
+            </BotaoPequeno>
           ) : null}
 
-          {onRemove ? (
-            <SmallButton $variant="danger" onPress={onRemove}>
-              <SmallButtonText $variant="danger">Excluir</SmallButtonText>
-            </SmallButton>
+          {aoRemover ? (
+            <BotaoPequeno $variante="perigo" onPress={aoRemover}>
+              <TextoBotaoPequeno $variante="perigo">Excluir</TextoBotaoPequeno>
+            </BotaoPequeno>
           ) : null}
-        </CardActions>
-      </CardInfo>
-    </Card>
+        </AcoesCartao>
+      </InformacoesCartao>
+    </Cartao>
   );
 };
 
-export default MovieCard;
+export default CardDeFilme;

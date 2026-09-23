@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ThemeProvider as StyledThemeProvider } from "styled-components/native";
+import { ThemeProvider as ProvedorTemaEstilizado } from "styled-components/native";
 
 /**
  * Tema "cinema" do app: a paleta escura é inspirada no próprio site do TMDb
@@ -15,100 +15,106 @@ import { ThemeProvider as StyledThemeProvider } from "styled-components/native";
  * A escolha do usuário fica salva no AsyncStorage.
  */
 
-const DARK_COLORS = {
-  background: "#0D0D0F",
-  surface: "#1A1A20",
-  surfaceAlt: "#24242C",
-  border: "#31313B",
-  text: "#F5F5F7",
-  textMuted: "#9BA1AC",
-  primary: "#01B4E4",
-  accent: "#90CEA1",
-  danger: "#E50914",
-  header: "#032541",
-  headerText: "#FFFFFF",
-  ratingGood: "#21D07A",
-  ratingMid: "#D2D531",
-  ratingBad: "#DB2360",
+const CORES_ESCURAS = {
+  fundo: "#0D0D0F",
+  superficie: "#1A1A20",
+  superficieAlternativa: "#24242C",
+  borda: "#31313B",
+  texto: "#F5F5F7",
+  textoSuave: "#9BA1AC",
+  primaria: "#01B4E4",
+  destaque: "#90CEA1",
+  perigo: "#E50914",
+  cabecalho: "#032541",
+  textoCabecalho: "#FFFFFF",
+  notaBoa: "#21D07A",
+  notaMedia: "#D2D531",
+  notaRuim: "#DB2360",
 };
 
-const LIGHT_COLORS = {
-  background: "#FFFFFF",
-  surface: "#FFFFFF",
-  surfaceAlt: "#F1F3F6",
-  border: "#DDE1E7",
-  text: "#0D0D0F",
-  textMuted: "#5C6470",
-  primary: "#01B4E4",
-  accent: "#0F8F6B",
-  danger: "#E50914",
-  header: "#032541",
-  headerText: "#FFFFFF",
-  ratingGood: "#1FA85F",
-  ratingMid: "#C7A800",
-  ratingBad: "#DB2360",
+const CORES_CLARAS = {
+  fundo: "#FFFFFF",
+  superficie: "#FFFFFF",
+  superficieAlternativa: "#F1F3F6",
+  borda: "#DDE1E7",
+  texto: "#0D0D0F",
+  textoSuave: "#5C6470",
+  primaria: "#01B4E4",
+  destaque: "#0F8F6B",
+  perigo: "#E50914",
+  cabecalho: "#032541",
+  textoCabecalho: "#FFFFFF",
+  notaBoa: "#1FA85F",
+  notaMedia: "#C7A800",
+  notaRuim: "#DB2360",
 };
 
-const STORAGE_KEY = "theme";
+/* O nome do registro gravado no aparelho continua em inglês: mudar essa string
+   faria o app "esquecer" o tema que o usuário já escolheu. */
+const CHAVE_ARMAZENAMENTO = "theme";
 
-const ThemeContext = createContext({
-  mode: "dark",
-  isDark: true,
-  colors: DARK_COLORS,
-  toggleTheme: () => {},
+/* Os valores "dark" e "light" também são os que ficam salvos no aparelho. */
+const ESCURO = "dark";
+const CLARO = "light";
+
+const ContextoTema = createContext({
+  modo: ESCURO,
+  temaEscuro: true,
+  cores: CORES_ESCURAS,
+  alternarTema: () => {},
 });
 
-export const ThemeProvider = ({ children }) => {
-  const [mode, setMode] = useState("dark");
-  const [ready, setReady] = useState(false);
+export const ProvedorTema = ({ children }) => {
+  const [modo, definirModo] = useState(ESCURO);
+  const [pronto, definirPronto] = useState(false);
 
   // Recupera o tema salvo antes de montar a interface.
   useEffect(() => {
-    let active = true;
+    let ativo = true;
 
-    AsyncStorage.getItem(STORAGE_KEY)
-      .then((saved) => {
-        if (active && (saved === "light" || saved === "dark")) {
-          setMode(saved);
+    AsyncStorage.getItem(CHAVE_ARMAZENAMENTO)
+      .then((salvo) => {
+        if (ativo && (salvo === CLARO || salvo === ESCURO)) {
+          definirModo(salvo);
         }
       })
       .catch(() => {})
       .finally(() => {
-        if (active) setReady(true);
+        if (ativo) definirPronto(true);
       });
 
     return () => {
-      active = false;
+      ativo = false;
     };
   }, []);
 
-  const toggleTheme = useCallback(() => {
-    setMode((current) => {
-      const next = current === "dark" ? "light" : "dark";
-      AsyncStorage.setItem(STORAGE_KEY, next).catch(() => {});
-      return next;
+  const alternarTema = useCallback(() => {
+    definirModo((atual) => {
+      const proximo = atual === ESCURO ? CLARO : ESCURO;
+      AsyncStorage.setItem(CHAVE_ARMAZENAMENTO, proximo).catch(() => {});
+      return proximo;
     });
   }, []);
 
-  const colors = mode === "dark" ? DARK_COLORS : LIGHT_COLORS;
+  const cores = modo === ESCURO ? CORES_ESCURAS : CORES_CLARAS;
 
-  const value = useMemo(
-    () => ({ mode, isDark: mode === "dark", colors, toggleTheme }),
-    [mode, colors, toggleTheme],
+  const valor = useMemo(
+    () => ({ modo, temaEscuro: modo === ESCURO, cores, alternarTema }),
+    [modo, cores, alternarTema],
   );
 
-  if (!ready) return null;
+  if (!pronto) return null;
 
   return (
-    <ThemeContext.Provider value={value}>
-      <StyledThemeProvider theme={{ colors, mode }}>
+    <ContextoTema.Provider value={valor}>
+      <ProvedorTemaEstilizado theme={{ cores, modo }}>
         {children}
-      </StyledThemeProvider>
-    </ThemeContext.Provider>
+      </ProvedorTemaEstilizado>
+    </ContextoTema.Provider>
   );
 };
 
 /** Atalho para acessar as cores dentro das telas (ex.: ícones e StatusBar). */
-export const useTheme = () => useContext(ThemeContext);
+export const useTema = () => useContext(ContextoTema);
 
-export default ThemeContext;
+export default ContextoTema;
