@@ -182,7 +182,7 @@ export const Saudacao = styled.Text`
 `;
 
 export const DicaSaudacao = styled.Text`
-  font-size: 13px;
+  font-size: 16px;
   color: ${({ theme }) => theme.cores.textoSuave};
   margin-top: 2px;
 `;
@@ -235,7 +235,7 @@ export const Aba = styled(RectButton)`
 `;
 
 export const TextoAba = styled.Text`
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
   color: ${({ theme, $ativo }) =>
     $ativo ? "#06283d" : theme.cores.textoSuave};
@@ -286,7 +286,7 @@ export const PosterAlternativo = styled.View`
 
 export const InformacoesCartao = styled.View`
   flex: 1;
-  margin-left: 12px;
+  margin-left: 14px;
 `;
 
 export const LinhaTitulo = styled.View`
@@ -298,13 +298,13 @@ export const LinhaTitulo = styled.View`
 export const TituloCartao = styled.Text.attrs({ numberOfLines: 2 })`
   flex: 1;
   margin-right: 8px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: bold;
   color: ${({ theme }) => theme.cores.texto};
 `;
 
 export const ResumoCartao = styled.Text.attrs({ numberOfLines: 1 })`
-  font-size: 12px;
+  font-size: 14px;
   color: ${({ theme }) => theme.cores.textoSuave};
   margin-top: 3px;
 `;
@@ -328,7 +328,7 @@ export const PontoStatus = styled.View`
 `;
 
 export const TextoStatus = styled.Text`
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
   color: ${({ theme }) => theme.cores.texto};
 `;
@@ -350,7 +350,7 @@ export const SeloNota = styled.View`
 `;
 
 export const TextoNota = styled.Text`
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
   color: ${({ theme }) => theme.cores.texto};
 `;
@@ -378,7 +378,7 @@ export const BotaoPequeno = styled(RectButton)`
 /* numberOfLines: 1 evita que rótulos longos ("VER DETALHES") quebrem em duas
    linhas dentro do botão, que tem altura fixa de 34px. */
 export const TextoBotaoPequeno = styled.Text.attrs({ numberOfLines: 1 })`
-  font-size: 11px;
+  font-size: 12px;
   font-weight: bold;
   color: ${({ theme, $variante }) =>
     $variante === "perigo"
@@ -390,7 +390,7 @@ export const TextoBotaoPequeno = styled.Text.attrs({ numberOfLines: 1 })`
 `;
 
 export const DicaCategoria = styled.Text`
-  font-size: 11px;
+  font-size: 14px;
   color: ${({ theme }) => theme.cores.textoSuave};
   margin-top: 2px;
 `;
@@ -483,7 +483,7 @@ export const CaixaMensagem = styled.View`
 `;
 
 export const TextoMensagem = styled.Text`
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
   color: ${({ theme }) => theme.cores.texto};
 `;
@@ -539,7 +539,8 @@ export const TituloDetalhes = styled.Text`
 `;
 
 export const ResumoDetalhes = styled.Text`
-  font-size: 13px;
+  font-size: 16px;
+  text-align: justify;
   color: ${({ theme }) => theme.cores.textoSuave};
   margin-top: 4px;
 `;
@@ -553,7 +554,7 @@ export const EtiquetaTipo = styled.View`
 `;
 
 export const TextoEtiquetaTipo = styled.Text`
-  font-size: 10px;
+  font-size: 16px;
   font-weight: bold;
   color: #06283d;
   text-transform: uppercase;
@@ -575,12 +576,13 @@ export const Etiqueta = styled.View`
 `;
 
 export const TextoEtiqueta = styled.Text`
-  font-size: 12px;
+  font-size: 16px;
   color: ${({ theme }) => theme.cores.texto};
 `;
 
 export const Sinopse = styled.Text`
-  font-size: 14px;
+  font-size: 18px;
+  text-align: justify;
   line-height: 21px;
   color: ${({ theme }) => theme.cores.textoSuave};
   margin-top: 10px;

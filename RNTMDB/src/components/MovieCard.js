@@ -88,7 +88,7 @@ const CardDeFilme = ({
 
           {aoAdicionar && !jaAdicionado ? (
             <BotaoPequeno onPress={aoAdicionar} disabled={carregando}>
-              <TextoBotaoPequeno>{carregando ? "..." : "ADD"}</TextoBotaoPequeno>
+              <TextoBotaoPequeno>{carregando ? "..." : "Adicionar"}</TextoBotaoPequeno>
             </BotaoPequeno>
           ) : null}
 

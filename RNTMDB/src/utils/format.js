@@ -178,10 +178,10 @@ export const juntarSemRepetir = (atuais = [], novos = []) => {
 /** Linha de destaque do card: "2024 • 2h 15min" / "2021 • 3 temporadas". */
 export const montarSubtitulo = (item) => {
   const partes = [];
-  if (item.year && item.year !== "—") partes.push(item.year);
+  if (item.year && item.year !== "—") partes.push(`Ano: ${item.year}`);
   if (item.mediaType === "tv" && item.seasons)
-    partes.push(pluralizarTemporadas(item.seasons));
-  else if (item.runtime) partes.push(formatarDuracao(item.runtime));
+    partes.push(`Duração: ${pluralizarTemporadas(item.seasons)}`);
+  else if (item.runtime) partes.push(`Duração: ${formatarDuracao(item.runtime)}`);
   else if (item.mediaType === "tv") partes.push("Série");
   else partes.push("Filme");
   return partes.join(" • ");
