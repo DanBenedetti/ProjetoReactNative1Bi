@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Alert, Linking, Share, View } from "react-native";
+import { ActivityIndicator, Alert, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import {
@@ -69,7 +69,7 @@ import {
  * Tela 4 - MAIS DETALHES DOS CARDS
  *
  * Recebe o card escolhido, busca os detalhes completos no TMDb
- * (sinopse, elenco, trailer e similares) e permite gerenciar o título
+ * (sinopse, elenco e similares) e permite gerenciar o título
  * dentro da lista do usuário.
  */
 const MAX_ESTRELAS = 5;
@@ -136,15 +136,6 @@ const Detalhes = ({ navigation, route }) => {
   }, [navigation, cartao.title]);
 
   const elenco = dadosCompletos?.credits?.cast?.slice(0, 20) || [];
-
-  const trailer = useMemo(() => {
-    const videos = dadosCompletos?.videos?.results || [];
-    return (
-      videos.find((video) => video.site === "YouTube" && video.type === "Trailer") ||
-      videos.find((video) => video.site === "YouTube") ||
-      null
-    );
-  }, [dadosCompletos]);
 
   const similares = useMemo(
     () =>
@@ -219,25 +210,6 @@ const Detalhes = ({ navigation, route }) => {
         },
       },
     ]);
-  };
-
-  const abrirTrailer = () => {
-    if (!trailer) return;
-    Linking.openURL(`https://www.youtube.com/watch?v=${trailer.key}`).catch(() =>
-      Alert.alert("Erro", "Não foi possível abrir o trailer."),
-    );
-  };
-
-  const compartilhar = async () => {
-    try {
-      await Share.share({
-        message: `${cartao.title} (${cartao.year}) — nota ${formatarNota(
-          cartao.voteAverage,
-        )}/10 no TMDb.${cartao.overview ? `\n\n${cartao.overview}` : ""}`,
-      });
-    } catch {
-      // Usuário cancelou o compartilhamento: nada a fazer.
-    }
   };
 
   const avaliar = (estrelas) => {
@@ -346,22 +318,6 @@ const Detalhes = ({ navigation, route }) => {
 
         {/* Ações */}
         <LinhaAcoes>
-          {trailer ? (
-            <BotaoPilula onPress={abrirTrailer}>
-              <MaterialIcons
-                name="play-circle-outline"
-                size={16}
-                color={cores.texto}
-              />
-              <TextoBotaoPilula>Assistir trailer</TextoBotaoPilula>
-            </BotaoPilula>
-          ) : null}
-
-          <BotaoPilula onPress={compartilhar}>
-            <MaterialIcons name="share" size={16} color={cores.texto} />
-            <TextoBotaoPilula>Compartilhar</TextoBotaoPilula>
-          </BotaoPilula>
-
           {!naBiblioteca ? (
             <BotaoPilula $ativo onPress={adicionarALista}>
               <MaterialIcons name="add-circle-outline" size={16} color="#06283d" />

@@ -60,11 +60,11 @@ export const buscarTitulos = (termo, pagina = 1) =>
 
 /**
  * Detalhes completos de um filme/série. "append_to_response" evita três
- * requisições separadas trazendo elenco, vídeos e títulos similares de uma vez.
+ * requisições separadas trazendo elenco e títulos similares de uma vez.
  */
 export const buscarDetalhes = (mediaType, id) =>
   api.get(`/${mediaType}/${id}`, {
-    params: { append_to_response: "credits,videos,similar" },
+    params: { append_to_response: "credits,similar" },
   });
 
 export default api;
