@@ -488,59 +488,6 @@ export const TextoMensagem = styled.Text`
   color: ${({ theme }) => theme.cores.texto};
 `;
 
-/* --- Roleta -------------------------------------------------------- */
-
-export const BotaoRoleta = styled(RectButton)`
-  position: absolute;
-  right: 20px;
-  bottom: 24px;
-  height: 54px;
-  border-radius: 27px;
-  padding-horizontal: 18px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  background: ${({ theme }) => theme.cores.primaria};
-`;
-
-export const TextoBotaoRoleta = styled.Text`
-  font-size: 13px;
-  font-weight: bold;
-  color: #06283d;
-  margin-left: 8px;
-  text-transform: uppercase;
-`;
-
-export const FundoModal = styled.Pressable`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: 28px;
-  background: rgba(0, 0, 0, 0.75);
-`;
-
-export const QuadroModal = styled.Pressable`
-  width: 100%;
-  border-radius: 16px;
-  padding: 22px;
-  align-items: center;
-  background: ${({ theme }) => theme.cores.superficie};
-`;
-
-export const TituloModal = styled.Text`
-  font-size: 17px;
-  font-weight: bold;
-  color: ${({ theme }) => theme.cores.texto};
-  margin-bottom: 4px;
-`;
-
-export const TextoModal = styled.Text`
-  font-size: 14px;
-  color: ${({ theme }) => theme.cores.textoSuave};
-  text-align: center;
-  margin-top: 4px;
-`;
-
 /* ------------------------------------------------------------------ *
  * Tela de DETALHES
  * ------------------------------------------------------------------ */

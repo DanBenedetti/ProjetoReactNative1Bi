@@ -3,21 +3,17 @@ import {
   ActivityIndicator,
   Alert,
   Keyboard,
-  Modal,
   RefreshControl,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import CardDeFilme from "../components/MovieCard";
 import AbasSegmento from "../components/SegmentTabs";
 import {
   BotaoBuscar,
-  BotaoContorno,
   BotaoLimpar,
   BotaoPrincipal,
-  BotaoRoleta,
   CabecalhoResultados,
   CaixaAviso,
   CaixaCarregando,
@@ -25,31 +21,18 @@ import {
   CampoBusca,
   DicaSaudacao,
   EstadoVazio,
-  EtiquetaStatus,
-  FundoModal,
   LinhaBusca,
   LinhaSaudacao,
   Lista,
-  PontoStatus,
-  PosterAlternativo,
-  PosterDetalhes,
-  QuadroModal,
   RodapeCarregando,
   Saudacao,
-  SeloNota,
   Tela,
   TextoAviso,
-  TextoBotaoContorno,
   TextoBotaoLimpar,
   TextoBotaoPrincipal,
-  TextoBotaoRoleta,
   TextoMensagem,
-  TextoModal,
-  TextoNota,
-  TextoStatus,
   TextoSuave,
   TextoVazio,
-  TituloModal,
   TituloVazio,
 } from "../styles";
 import {
@@ -63,11 +46,9 @@ import { useTema } from "../contexts/ThemeContext";
 import {
   CATEGORIAS,
   chaveDoCartao,
-  formatarNota,
   juntarSemRepetir,
   normalizarDetalhes,
   normalizarResultadoBusca,
-  urlPoster,
 } from "../utils/format";
 
 /**
@@ -118,7 +99,6 @@ const Cards = ({ navigation }) => {
 
   const [chaveAdicionando, definirChaveAdicionando] = useState(null);
   const [mensagem, definirMensagem] = useState("");
-  const [sorteio, definirSorteio] = useState(null);
 
   /* ---------------------------------------------------------------- *
    * Dados iniciais
@@ -293,19 +273,6 @@ const Cards = ({ navigation }) => {
     ]);
   };
 
-  /** Roleta: sorteia um título da lista do usuário. */
-  const sortear = () => {
-    if (itens.length === 0) {
-      Alert.alert(
-        "Lista vazia",
-        "Adicione pelo menos um filme ou série para usar a roleta.",
-      );
-      return;
-    }
-    const escolhido = itens[Math.floor(Math.random() * itens.length)];
-    definirSorteio(escolhido);
-  };
-
   /* ---------------------------------------------------------------- *
    * Lista exibida
    * ---------------------------------------------------------------- */
@@ -412,8 +379,6 @@ const Cards = ({ navigation }) => {
     );
   };
 
-  const posterDoSorteio = sorteio ? urlPoster(sorteio.posterPath) : null;
-
   return (
     <Tela>
       <LinhaSaudacao>
@@ -506,81 +471,6 @@ const Cards = ({ navigation }) => {
         }
       />
 
-      {itens.length > 0 && !resultadosBusca ? (
-        <BotaoRoleta onPress={sortear}>
-          <MaterialIcons name="casino" size={22} color="#06283d" />
-          <TextoBotaoRoleta>O que assistir?</TextoBotaoRoleta>
-        </BotaoRoleta>
-      ) : null}
-
-      <Modal
-        visible={Boolean(sorteio)}
-        transparent
-        animationType="fade"
-        onRequestClose={() => definirSorteio(null)}
-      >
-        {/* No Android o Modal é desenhado fora da árvore raiz do app, então os
-            RectButton daqui de dentro precisam de uma nova raiz do Gesture
-            Handler para receber o toque (exigência da própria biblioteca). */}
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <FundoModal onPress={() => definirSorteio(null)}>
-            <QuadroModal onPress={() => {}}>
-              <TituloModal>Sorteio da roleta</TituloModal>
-              <TextoModal style={{ marginBottom: 14 }}>
-                Que tal assistir agora?
-              </TextoModal>
-
-              {posterDoSorteio ? (
-                <PosterDetalhes source={{ uri: posterDoSorteio }} />
-              ) : (
-                <PosterAlternativo>
-                  <MaterialIcons
-                    name="movie"
-                    size={28}
-                    color={cores.textoSuave}
-                  />
-                </PosterAlternativo>
-              )}
-
-              <TituloModal style={{ marginTop: 12 }}>
-                {sorteio?.title}
-              </TituloModal>
-
-              <EtiquetaStatus>
-                <PontoStatus />
-                <TextoStatus>
-                  {sorteio?.statusLabel || "Salvo na sua lista"}
-                </TextoStatus>
-              </EtiquetaStatus>
-
-              <SeloNota
-                $nota={sorteio?.voteAverage || 0}
-                style={{ marginTop: 10 }}
-              >
-                <TextoNota>{formatarNota(sorteio?.voteAverage || 0)}</TextoNota>
-              </SeloNota>
-
-              <BotaoPrincipal
-                onPress={() => {
-                  const cartao = sorteio;
-                  definirSorteio(null);
-                  navigation.navigate("detalhes", { cartao });
-                }}
-              >
-                <TextoBotaoPrincipal>Ver detalhes</TextoBotaoPrincipal>
-              </BotaoPrincipal>
-
-              <BotaoContorno onPress={sortear}>
-                <TextoBotaoContorno>Sortear de novo</TextoBotaoContorno>
-              </BotaoContorno>
-
-              <TextoSuave style={{ marginTop: 12 }}>
-                Toque fora do quadro para fechar.
-              </TextoSuave>
-            </QuadroModal>
-          </FundoModal>
-        </GestureHandlerRootView>
-      </Modal>
     </Tela>
   );
 };

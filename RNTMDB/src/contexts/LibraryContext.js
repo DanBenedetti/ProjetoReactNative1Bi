@@ -15,9 +15,6 @@ import { chaveDoCartao } from "../utils/format";
  * Tudo é persistido no AsyncStorage, então os cards continuam lá
  * depois de fechar e abrir o app novamente.
  */
-
-/* A chave do armazenamento continua em inglês porque é o nome do registro
-   que já está gravado no aparelho de quem usa o app. */
 const CHAVE_ARMAZENAMENTO = "library";
 
 const ContextoBiblioteca = createContext(null);
@@ -54,8 +51,6 @@ export const ProvedorBiblioteca = ({ children }) => {
 
   /**
    * Adiciona um card. Retorna false quando ele já estava na lista.
-   * A verificação usa a lista atual (closure) para o retorno ser síncrono
-   * e confiável, já que o React não executa o updater do setState na hora.
    */
   const adicionarItem = useCallback(
     (cartao) => {

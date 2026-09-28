@@ -138,8 +138,7 @@ pressione `a` / `i` no terminal para abrir no emulador.
 3. Na aba **Destaques**, toque em **ADD** em alguns títulos
 4. Use as abas **Quero ver / Assistidos / Favoritos** para organizar
 5. **VER DETALHES** → sinopse, elenco, trailer, similares, notar com estrelas
-6. Toque no botão **🎲 O que assistir?** para sortear um título
-7. Toque no ícone **☀️/🌙** no cabeçalho para alternar o tema claro/escuro
+6. Toque no ícone **☀️/🌙** no cabeçalho para alternar o tema claro/escuro
 
 ---
 
@@ -256,7 +255,6 @@ português dentro dos arquivos. As telas da navegação também usam nomes em po
 - **Tema claro/escuro** estilo cinema, com a escolha salva no aparelho
 - **Tela de detalhes completa**: sinopse, elenco com fotos, trailer no YouTube,
   títulos similares (tocar em um similar abre os detalhes dele), orçamento e receita
-- **🎲 Roleta "O que assistir hoje?"**, que sorteia um título da lista do usuário
 - **Nota pessoal de 1 a 5 estrelas** por título, além da nota do TMDb
 - **Validação real** de CPF (com dígitos verificadores), telefone (DDD e nono dígito),
   e-mail e senha, com máscaras aplicadas durante a digitação
@@ -275,8 +273,6 @@ os seguintes princípios:
   Material recomenda para *dark theme*.
 - **Ripple nativo**: os botões são `RectButton` (`react-native-gesture-handler`), que
   já traz o efeito de ondulação (*ripple*) do Android ao toque.
-- **FAB**: o botão flutuante "O que assistir?" segue o padrão *Floating Action Button*
-  (fixo no canto inferior direito, com ação primária).
 - **Superfícies e cantos**: raios de canto consistentes (8–16 px) e separação de
   conteúdo por superfícies (`superficie` / `superficieAlternativa`) em vez de linhas pesadas.
 
@@ -358,12 +354,6 @@ antigo (em inglês) e para que o estilo serve.
 | `RodapeCarregando` | `FooterLoading` | Indicador no fim da lista |
 | `CaixaMensagem` | `FeedbackBox` | Faixa de confirmação ("adicionado") |
 | `TextoMensagem` | `FeedbackText` | Texto da confirmação |
-| `BotaoRoleta` | `DiceButton` | FAB "O que assistir?" |
-| `TextoBotaoRoleta` | `DiceButtonText` | Texto do FAB |
-| `FundoModal` | `ModalOverlay` | Fundo escuro do modal |
-| `QuadroModal` | `ModalCard` | Quadro branco do modal |
-| `TituloModal` | `ModalTitle` | Título do sorteio |
-| `TextoModal` | `ModalText` | Texto do sorteio |
 | `RolagemDetalhes` | `DetailScroll` | Rolagem da tela de detalhes |
 | `CaixaBanner` | `BackdropWrapper` | Faixa da imagem de fundo |
 | `ImagemBanner` | `BackdropImage` | Imagem de fundo |
